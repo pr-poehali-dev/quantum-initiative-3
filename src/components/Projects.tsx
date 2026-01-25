@@ -181,11 +181,11 @@ export function Projects() {
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6">
+              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6 bg-secondary">
                 {project.mediaType === "video" ? (
                   <video
                     src={project.media}
-                    className={`w-full h-full object-cover transition-transform duration-700 ${
+                    className={`w-full h-full object-contain transition-transform duration-700 ${
                       hoveredId === project.id ? "scale-105" : "scale-100"
                     }`}
                     autoPlay
