@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Get all videos",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Add new video",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "url": "https://example.com/video.mp4",
+        "title": "Test Video",
+        "description": "Test description"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "url": "string",
+        "title": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
