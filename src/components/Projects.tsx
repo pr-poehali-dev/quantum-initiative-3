@@ -320,13 +320,13 @@ export function Projects() {
             <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Портфолио</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight">Наши изделия</h2>
           </div>
-          <button
-            onClick={handleAddProject}
+          <a
+            href="/admin"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group px-4 py-2 rounded-lg hover:bg-secondary/50"
           >
-            <Icon name="Plus" size={16} />
-            Добавить изделие
-          </button>
+            <Icon name="Lock" size={16} />
+            Админ-панель
+          </a>
         </div>
 
         {isAdding && (
