@@ -88,7 +88,10 @@ export function Projects() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      setIsAdding(false)
+      return
+    }
 
     const mediaType: MediaType = file.type.startsWith('video/') ? 'video' : 'image'
     const mediaUrl = URL.createObjectURL(file)
@@ -104,7 +107,12 @@ export function Projects() {
     }
 
     setProjectsList([newProject, ...projectsList])
+    setRevealedImages((prev) => new Set(prev).add(newProject.id))
     setIsAdding(false)
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleRemoveProject = (id: number) => {
