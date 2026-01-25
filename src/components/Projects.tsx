@@ -56,9 +56,17 @@ export function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [revealedImages, setRevealedImages] = useState<Set<number>>(new Set())
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [projectsList, setProjectsList] = useState<Project[]>(projects)
+  const [projectsList, setProjectsList] = useState<Project[]>(() => {
+    const saved = localStorage.getItem('woodcraft-projects')
+    return saved ? JSON.parse(saved) : projects
+  })
   const [isAdding, setIsAdding] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    localStorage.setItem('woodcraft-projects', JSON.stringify(projectsList))
+  }, [projectsList])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,7 +94,7 @@ export function Projects() {
     setIsAdding(true)
   }
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) {
       setIsAdding(false)
@@ -94,25 +102,53 @@ export function Projects() {
     }
 
     const mediaType: MediaType = file.type.startsWith('video/') ? 'video' : 'image'
-    const mediaUrl = URL.createObjectURL(file)
-
-    const newProject: Project = {
-      id: Date.now(),
-      title: "Новое изделие",
-      category: "Категория",
-      location: "Описание",
-      year: new Date().getFullYear().toString(),
-      media: mediaUrl,
-      mediaType,
-    }
-
-    setProjectsList([newProject, ...projectsList])
-    setRevealedImages((prev) => new Set(prev).add(newProject.id))
-    setIsAdding(false)
+    setIsUploading(true)
     
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      try {
+        const base64Data = event.target?.result as string
+        
+        const response = await fetch('https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            file: base64Data,
+            type: file.type
+          })
+        })
+        
+        if (!response.ok) throw new Error('Upload failed')
+        
+        const data = await response.json()
+        
+        const newProject: Project = {
+          id: Date.now(),
+          title: "Новое изделие",
+          category: "Категория",
+          location: "Описание",
+          year: new Date().getFullYear().toString(),
+          media: data.url,
+          mediaType,
+        }
+
+        setProjectsList([newProject, ...projectsList])
+        setRevealedImages((prev) => new Set(prev).add(newProject.id))
+        setIsAdding(false)
+        setIsUploading(false)
+        
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+      } catch (error) {
+        console.error('Upload error:', error)
+        setIsAdding(false)
+        setIsUploading(false)
+        alert('Ошибка загрузки файла')
+      }
     }
+    
+    reader.readAsDataURL(file)
   }
 
   const handleRemoveProject = (id: number) => {
@@ -150,25 +186,36 @@ export function Projects() {
               accept="image/*,video/*"
               onChange={handleFileSelect}
               className="hidden"
+              disabled={isUploading}
             />
             <div className="text-center">
-              <Icon name="Upload" size={48} className="mx-auto mb-4 text-muted-foreground" />
-              <p className="text-lg mb-2">Загрузите фото или видео</p>
-              <p className="text-sm text-muted-foreground mb-6">Поддерживаются форматы: JPG, PNG, MP4, WebM</p>
-              <div className="flex gap-3 justify-center">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Выбрать файл
-                </button>
-                <button
-                  onClick={() => setIsAdding(false)}
-                  className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
-                >
-                  Отмена
-                </button>
-              </div>
+              {isUploading ? (
+                <>
+                  <Icon name="Loader2" size={48} className="mx-auto mb-4 text-muted-foreground animate-spin" />
+                  <p className="text-lg mb-2">Загрузка...</p>
+                  <p className="text-sm text-muted-foreground">Пожалуйста, подождите</p>
+                </>
+              ) : (
+                <>
+                  <Icon name="Upload" size={48} className="mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-lg mb-2">Загрузите фото или видео</p>
+                  <p className="text-sm text-muted-foreground mb-6">Поддерживаются форматы: JPG, PNG, MP4, WebM</p>
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                      Выбрать файл
+                    </button>
+                    <button
+                      onClick={() => setIsAdding(false)}
+                      className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+                    >
+                      Отмена
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

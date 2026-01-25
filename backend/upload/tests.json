@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Upload image with base64",
+      "method": "POST",
+      "body": {
+        "file": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "type": "image/png"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "url": "string",
+        "uploaded_at": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
