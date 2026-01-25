@@ -77,13 +77,19 @@ export function Projects() {
   }, [projectsList])
 
   useEffect(() => {
+    if (projectsList.length > 0) {
+      setRevealedImages(new Set([projectsList[0].id]))
+    }
+  }, [])
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = imageRefs.current.indexOf(entry.target as HTMLDivElement)
-            if (index !== -1) {
-              setRevealedImages((prev) => new Set(prev).add(projects[index].id))
+            if (index !== -1 && projectsList[index]) {
+              setRevealedImages((prev) => new Set(prev).add(projectsList[index].id))
             }
           }
         })
@@ -96,7 +102,7 @@ export function Projects() {
     })
 
     return () => observer.disconnect()
-  }, [])
+  }, [projectsList])
 
   const handleAddProject = () => {
     setIsAdding(true)
@@ -213,6 +219,15 @@ export function Projects() {
       }
       return newZoom
     })
+  }
+
+  const handleDoubleClick = () => {
+    if (zoom > 1) {
+      setZoom(1)
+      setPosition({ x: 0, y: 0 })
+    } else {
+      setZoom(2)
+    }
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -505,7 +520,8 @@ export function Projects() {
               onTouchStart={handleTouchStartDrag}
               onTouchMove={handleTouchMoveDrag}
               onTouchEnd={handleTouchEndDrag}
-              style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+              onDoubleClick={handleDoubleClick}
+              style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in' }}
             >
               {projectsList[currentImageIndex]?.mediaType === 'video' ? (
                 <video
