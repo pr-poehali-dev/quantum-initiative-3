@@ -119,16 +119,23 @@ export function Projects() {
         
         const response = await fetch('https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
             file: base64Data,
             type: file.type
           })
         })
         
-        if (!response.ok) throw new Error('Upload failed')
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('Upload failed:', response.status, errorText)
+          throw new Error('Upload failed')
+        }
         
         const data = await response.json()
+        console.log('Upload success:', data)
         
         const newProject: Project = {
           id: Date.now(),
@@ -347,7 +354,7 @@ export function Projects() {
             >
               <div 
                 ref={(el) => (imageRefs.current[index] = el)} 
-                className="relative overflow-hidden aspect-[4/3] mb-6 bg-secondary cursor-pointer"
+                className="relative overflow-hidden aspect-[4/3] mb-6 bg-muted cursor-pointer"
                 onClick={() => openLightbox(index)}
               >
                 {project.mediaType === "video" ? (
@@ -486,42 +493,48 @@ export function Projects() {
           </div>
 
           <div 
-            className="max-w-[90vw] max-h-[90vh] overflow-hidden flex items-center justify-center"
+            className="relative w-[90vw] h-[90vh] overflow-hidden flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStartDrag}
-            onTouchMove={handleTouchMoveDrag}
-            onTouchEnd={handleTouchEndDrag}
-            style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
           >
-            {projectsList[currentImageIndex]?.mediaType === 'video' ? (
-              <video
-                src={projectsList[currentImageIndex].media}
-                className="max-w-full max-h-[90vh] object-contain select-none"
-                style={{ 
-                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                  transition: isDragging ? 'none' : 'transform 0.2s'
-                }}
-                controls
-                autoPlay
-                loop
-                draggable={false}
-              />
-            ) : (
-              <img
-                src={projectsList[currentImageIndex]?.media}
-                alt={projectsList[currentImageIndex]?.title}
-                className="max-w-full max-h-[90vh] object-contain select-none"
-                style={{ 
-                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                  transition: isDragging ? 'none' : 'transform 0.2s'
-                }}
-                draggable={false}
-              />
-            )}
+            <div
+              className="relative"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStartDrag}
+              onTouchMove={handleTouchMoveDrag}
+              onTouchEnd={handleTouchEndDrag}
+              style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+            >
+              {projectsList[currentImageIndex]?.mediaType === 'video' ? (
+                <video
+                  src={projectsList[currentImageIndex].media}
+                  className="max-w-[90vw] max-h-[90vh] object-contain select-none"
+                  style={{ 
+                    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+                    transition: isDragging ? 'none' : 'transform 0.2s',
+                    transformOrigin: 'center center'
+                  }}
+                  controls
+                  autoPlay
+                  loop
+                  draggable={false}
+                />
+              ) : (
+                <img
+                  src={projectsList[currentImageIndex]?.media}
+                  alt={projectsList[currentImageIndex]?.title}
+                  className="max-w-[90vw] max-h-[90vh] object-contain select-none"
+                  style={{ 
+                    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+                    transition: isDragging ? 'none' : 'transform 0.2s',
+                    transformOrigin: 'center center'
+                  }}
+                  draggable={false}
+                />
+              )}
+            </div>
           </div>
 
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-white max-w-2xl px-6">
