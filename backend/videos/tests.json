@@ -1,12 +1,10 @@
 {
   "tests": [
     {
-      "name": "Get all videos",
+      "name": "Get all media",
       "method": "GET",
       "path": "/",
-      "expectedStatus": 200,
-      "expectedBody": [],
-      "bodyMatcher": "partial"
+      "expectedStatus": 200
     },
     {
       "name": "Add new video",

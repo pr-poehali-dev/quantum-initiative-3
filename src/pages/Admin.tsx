@@ -4,21 +4,25 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 
 const ADMIN_PASSWORD = 'admin123';
-const VIDEO_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
+const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
 const UPLOAD_API = 'https://functions.poehali.dev/79ec0224-ad03-4786-a0d7-bea6e8ce3d08';
 
-interface Video {
+interface Media {
   id: number;
   url: string;
   title: string;
   description: string;
+  media_type: 'image' | 'video';
+  category: string;
+  location: string;
+  year: string;
   created_at: string;
 }
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [mediaList, setMediaList] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
@@ -28,7 +32,7 @@ export default function Admin() {
     const auth = sessionStorage.getItem('admin_auth');
     if (auth === 'true') {
       setIsAuthenticated(true);
-      loadVideos();
+      loadMedia();
     }
   }, []);
 
@@ -37,7 +41,7 @@ export default function Admin() {
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       sessionStorage.setItem('admin_auth', 'true');
-      loadVideos();
+      loadMedia();
       toast({
         title: 'Вход выполнен',
         description: 'Добро пожаловать в панель управления',
@@ -57,16 +61,16 @@ export default function Admin() {
     navigate('/');
   };
 
-  const loadVideos = async () => {
+  const loadMedia = async () => {
     setLoading(true);
     try {
-      const response = await fetch(VIDEO_API);
+      const response = await fetch(MEDIA_API);
       const data = await response.json();
-      setVideos(data);
+      setMediaList(data);
     } catch (error) {
       toast({
         title: 'Ошибка',
-        description: 'Не удалось загрузить видео',
+        description: 'Не удалось загрузить медиа',
         variant: 'destructive',
       });
     } finally {
@@ -93,6 +97,7 @@ export default function Admin() {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const base64 = event.target?.result as string;
+        const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
 
         const uploadResponse = await fetch(UPLOAD_API, {
           method: 'POST',
@@ -106,22 +111,26 @@ export default function Admin() {
         const uploadData = await uploadResponse.json();
 
         if (uploadData.url) {
-          const addResponse = await fetch(VIDEO_API, {
+          const addResponse = await fetch(MEDIA_API, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               url: uploadData.url,
               title: file.name,
               description: '',
+              media_type: mediaType,
+              category: '',
+              location: '',
+              year: new Date().getFullYear().toString(),
             }),
           });
 
           if (addResponse.ok) {
             toast({
-              title: 'Видео загружено',
-              description: 'Видео успешно добавлено в галерею',
+              title: 'Файл загружен',
+              description: 'Медиа успешно добавлено в галерею',
             });
-            loadVideos();
+            loadMedia();
           }
         }
       };
@@ -130,7 +139,7 @@ export default function Admin() {
     } catch (error) {
       toast({
         title: 'Ошибка загрузки',
-        description: 'Не удалось загрузить видео',
+        description: 'Не удалось загрузить файл',
         variant: 'destructive',
       });
     } finally {
@@ -139,24 +148,24 @@ export default function Admin() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Удалить это видео?')) return;
+    if (!confirm('Удалить этот элемент?')) return;
 
     try {
-      const response = await fetch(`${VIDEO_API}?id=${id}`, {
+      const response = await fetch(`${MEDIA_API}?id=${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         toast({
-          title: 'Видео удалено',
-          description: 'Видео успешно удалено из галереи',
+          title: 'Элемент удален',
+          description: 'Медиа успешно удалено из галереи',
         });
-        loadVideos();
+        loadMedia();
       }
     } catch (error) {
       toast({
         title: 'Ошибка',
-        description: 'Не удалось удалить видео',
+        description: 'Не удалось удалить элемент',
         variant: 'destructive',
       });
     }
@@ -190,11 +199,14 @@ export default function Admin() {
     );
   }
 
+  const images = mediaList.filter(m => m.media_type === 'image');
+  const videos = mediaList.filter(m => m.media_type === 'video');
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Управление видео</h1>
+          <h1 className="text-3xl font-bold">Управление галереей</h1>
           <div className="flex gap-4">
             <button
               onClick={() => navigate('/')}
@@ -212,7 +224,7 @@ export default function Admin() {
         </div>
 
         <div className="mb-8 p-6 bg-card rounded-lg border">
-          <h2 className="text-xl font-semibold mb-4">Загрузить видео</h2>
+          <h2 className="text-xl font-semibold mb-4">Загрузить файл</h2>
           <div className="flex items-center gap-4">
             <label className="flex-1">
               <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
@@ -224,12 +236,12 @@ export default function Admin() {
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <Icon name="Upload" size={24} />
-                    <span>Нажмите для выбора видео (макс. 50 МБ)</span>
+                    <span>Нажмите для выбора фото или видео (макс. 50 МБ)</span>
                   </div>
                 )}
                 <input
                   type="file"
-                  accept="video/*"
+                  accept="image/*,video/*"
                   onChange={handleFileUpload}
                   className="hidden"
                   disabled={uploading}
@@ -239,52 +251,90 @@ export default function Admin() {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg border p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Видео в галерее ({videos.length})</h2>
-            <button
-              onClick={loadVideos}
-              className="px-4 py-2 border rounded-md hover:bg-muted transition-colors flex items-center gap-2"
-              disabled={loading}
-            >
-              <Icon name={loading ? 'Loader2' : 'RefreshCw'} className={loading ? 'animate-spin' : ''} size={18} />
-              Обновить
-            </button>
-          </div>
+        <div className="space-y-8">
+          <div className="bg-card rounded-lg border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Фотографии ({images.length})</h2>
+              <button
+                onClick={loadMedia}
+                className="px-4 py-2 border rounded-md hover:bg-muted transition-colors flex items-center gap-2"
+                disabled={loading}
+              >
+                <Icon name={loading ? 'Loader2' : 'RefreshCw'} className={loading ? 'animate-spin' : ''} size={18} />
+                Обновить
+              </button>
+            </div>
 
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Icon name="Loader2" className="animate-spin" size={32} />
-            </div>
-          ) : videos.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Icon name="Video" size={48} className="mx-auto mb-4 opacity-50" />
-              <p>Нет загруженных видео</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {videos.map((video) => (
-                <div key={video.id} className="border rounded-lg overflow-hidden">
-                  <video src={video.url} className="w-full aspect-video object-cover" controls />
-                  <div className="p-4">
-                    <h3 className="font-medium truncate mb-2">{video.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(video.created_at).toLocaleDateString('ru-RU')}
-                      </span>
-                      <button
-                        onClick={() => handleDelete(video.id)}
-                        className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
-                      >
-                        <Icon name="Trash2" size={16} />
-                        Удалить
-                      </button>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Icon name="Loader2" className="animate-spin" size={32} />
+              </div>
+            ) : images.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <Icon name="Image" size={48} className="mx-auto mb-4 opacity-50" />
+                <p>Нет загруженных фотографий</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {images.map((media) => (
+                  <div key={media.id} className="border rounded-lg overflow-hidden">
+                    <img src={media.url} className="w-full aspect-video object-cover" alt={media.title} />
+                    <div className="p-4">
+                      <h3 className="font-medium truncate mb-2">{media.title}</h3>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(media.created_at).toLocaleDateString('ru-RU')}
+                        </span>
+                        <button
+                          onClick={() => handleDelete(media.id)}
+                          className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
+                        >
+                          <Icon name="Trash2" size={16} />
+                          Удалить
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-card rounded-lg border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Видео ({videos.length})</h2>
             </div>
-          )}
+
+            {videos.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <Icon name="Video" size={48} className="mx-auto mb-4 opacity-50" />
+                <p>Нет загруженных видео</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {videos.map((media) => (
+                  <div key={media.id} className="border rounded-lg overflow-hidden">
+                    <video src={media.url} className="w-full aspect-video object-cover" controls />
+                    <div className="p-4">
+                      <h3 className="font-medium truncate mb-2">{media.title}</h3>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(media.created_at).toLocaleDateString('ru-RU')}
+                        </span>
+                        <button
+                          onClick={() => handleDelete(media.id)}
+                          className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
+                        >
+                          <Icon name="Trash2" size={16} />
+                          Удалить
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import Icon from "@/components/ui/icon"
 
+const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07'
+
 type MediaType = 'image' | 'video'
 
 interface Project {
@@ -13,55 +15,12 @@ interface Project {
   mediaType: MediaType
 }
 
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Настенные панно",
-    category: "Декор интерьера",
-    location: "Резьба по дереву",
-    year: "2024",
-    media: "/images/hously-1.png",
-    mediaType: "image",
-  },
-  {
-    id: 2,
-    title: "Деревянные часы",
-    category: "Аксессуары",
-    location: "Ручная работа",
-    year: "2024",
-    media: "/images/hously-2.png",
-    mediaType: "image",
-  },
-  {
-    id: 3,
-    title: "Подарочные наборы",
-    category: "Сувениры",
-    location: "Коллекция 2024",
-    year: "2024",
-    media: "/images/hously-3.png",
-    mediaType: "image",
-  },
-  {
-    id: 4,
-    title: "Кухонные доски",
-    category: "Функциональный декор",
-    location: "Дуб и орех",
-    year: "2024",
-    media: "/images/hously-4.png",
-    mediaType: "image",
-  },
-]
-
 export function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [revealedImages, setRevealedImages] = useState<Set<number>>(new Set())
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [projectsList, setProjectsList] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('woodcraft-projects')
-    return saved ? JSON.parse(saved) : projects
-  })
-  const [isAdding, setIsAdding] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
+  const [projectsList, setProjectsList] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [zoom, setZoom] = useState(1)
@@ -70,17 +29,36 @@ export function Projects() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    localStorage.setItem('woodcraft-projects', JSON.stringify(projectsList))
-  }, [projectsList])
-
-  useEffect(() => {
-    if (projectsList.length > 0) {
-      setRevealedImages(new Set([projectsList[0].id]))
-    }
+    loadProjects()
   }, [])
+
+  const loadProjects = async () => {
+    try {
+      const response = await fetch(MEDIA_API)
+      const data = await response.json()
+      
+      const projects: Project[] = data.map((item: any) => ({
+        id: item.id,
+        title: item.title || 'Без названия',
+        category: item.category || 'Категория',
+        location: item.location || 'Описание',
+        year: item.year || new Date().getFullYear().toString(),
+        media: item.url,
+        mediaType: item.media_type as MediaType,
+      }))
+      
+      setProjectsList(projects)
+      if (projects.length > 0) {
+        setRevealedImages(new Set([projects[0].id]))
+      }
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -103,84 +81,6 @@ export function Projects() {
 
     return () => observer.disconnect()
   }, [projectsList])
-
-  const handleAddProject = () => {
-    setIsAdding(true)
-  }
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) {
-      setIsAdding(false)
-      return
-    }
-
-    const mediaType: MediaType = file.type.startsWith('video/') ? 'video' : 'image'
-    setIsUploading(true)
-    
-    const reader = new FileReader()
-    reader.onload = async (event) => {
-      try {
-        const base64Data = event.target?.result as string
-        
-        const response = await fetch('https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            file: base64Data,
-            type: file.type
-          })
-        })
-        
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('Upload failed:', response.status, errorText)
-          throw new Error('Upload failed')
-        }
-        
-        const data = await response.json()
-        console.log('Upload success:', data)
-        
-        const newProject: Project = {
-          id: Date.now(),
-          title: "Новое изделие",
-          category: "Категория",
-          location: "Описание",
-          year: new Date().getFullYear().toString(),
-          media: data.url,
-          mediaType,
-        }
-
-        setProjectsList([newProject, ...projectsList])
-        setRevealedImages((prev) => new Set(prev).add(newProject.id))
-        setIsAdding(false)
-        setIsUploading(false)
-        
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ''
-        }
-      } catch (error) {
-        console.error('Upload error:', error)
-        setIsAdding(false)
-        setIsUploading(false)
-        alert('Ошибка загрузки файла')
-      }
-    }
-    
-    reader.readAsDataURL(file)
-  }
-
-  const handleRemoveProject = (id: number) => {
-    setProjectsList(projectsList.filter(p => p.id !== id))
-  }
-
-  const handleUpdateProject = (id: number, field: keyof Project, value: string) => {
-    setProjectsList(projectsList.map(p => 
-      p.id === id ? { ...p, [field]: value } : p
-    ))
-  }
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index)
@@ -299,8 +199,6 @@ export function Projects() {
     }
   }
 
-
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!lightboxOpen) return
@@ -311,6 +209,18 @@ export function Projects() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [lightboxOpen])
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-32 md:py-29 bg-secondary/50">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="flex justify-center items-center py-20">
+            <Icon name="Loader2" className="animate-spin" size={48} />
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section id="projects" className="py-32 md:py-29 bg-secondary/50">
@@ -329,247 +239,162 @@ export function Projects() {
           </a>
         </div>
 
-        {isAdding && (
-          <div className="mb-8 p-8 border-2 border-dashed border-muted-foreground/30 rounded-lg bg-secondary/30">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleFileSelect}
-              className="hidden"
-              disabled={isUploading}
-            />
-            <div className="text-center">
-              {isUploading ? (
-                <>
-                  <Icon name="Loader2" size={48} className="mx-auto mb-4 text-muted-foreground animate-spin" />
-                  <p className="text-lg mb-2">Загрузка...</p>
-                  <p className="text-sm text-muted-foreground">Пожалуйста, подождите</p>
-                </>
-              ) : (
-                <>
-                  <Icon name="Upload" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-lg mb-2">Загрузите фото или видео</p>
-                  <p className="text-sm text-muted-foreground mb-6">Поддерживаются форматы: JPG, PNG, MP4, WebM</p>
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                    >
-                      Выбрать файл
-                    </button>
-                    <button
-                      onClick={() => setIsAdding(false)}
-                      className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
-                    >
-                      Отмена
-                    </button>
+        {projectsList.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground">
+            <Icon name="ImageOff" size={64} className="mx-auto mb-4 opacity-50" />
+            <p className="text-lg">Галерея пуста</p>
+            <p className="text-sm mt-2">Добавьте фото через админ-панель</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            {projectsList.map((project, index) => (
+              <article
+                key={project.id}
+                className="group"
+                onMouseEnter={() => setHoveredId(project.id)}
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                <div 
+                  ref={(el) => (imageRefs.current[index] = el)} 
+                  className="relative overflow-hidden aspect-[4/3] mb-6 bg-muted cursor-pointer"
+                  onClick={() => openLightbox(index)}
+                >
+                  {project.mediaType === "video" ? (
+                    <video
+                      src={project.media}
+                      className={`w-full h-full object-contain transition-transform duration-700 ${
+                        hoveredId === project.id ? "scale-105" : "scale-100"
+                      }`}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      src={project.media || "/placeholder.svg"}
+                      alt={project.title}
+                      className={`w-full h-full object-contain transition-transform duration-700 ${
+                        hoveredId === project.id ? "scale-105" : "scale-100"
+                      }`}
+                    />
+                  )}
+                  <div
+                    className="absolute inset-0 bg-primary origin-top"
+                    style={{
+                      transform: revealedImages.has(project.id) ? "scaleY(0)" : "scaleY(1)",
+                      transition: "transform 1.5s cubic-bezier(0.76, 0, 0.24, 1)",
+                    }}
+                  />
+                  {project.mediaType === "video" && (
+                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-md">
+                      <Icon name="Video" size={16} className="text-white" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-2xl md:text-3xl font-medium mb-3">{project.title}</h3>
+                    <div className="flex flex-col gap-1.5 text-base md:text-lg text-muted-foreground">
+                      <p>{project.category}</p>
+                      <p>{project.location}</p>
+                    </div>
                   </div>
-                </>
-              )}
-            </div>
+                  <span className="text-xl md:text-2xl text-muted-foreground flex-shrink-0">{project.year}</span>
+                </div>
+              </article>
+            ))}
           </div>
         )}
-
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-          {projectsList.map((project, index) => (
-            <article
-              key={project.id}
-              className="group"
-              onMouseEnter={() => setHoveredId(project.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div 
-                ref={(el) => (imageRefs.current[index] = el)} 
-                className="relative overflow-hidden aspect-[4/3] mb-6 bg-muted cursor-pointer"
-                onClick={() => openLightbox(index)}
-              >
-                {project.mediaType === "video" ? (
-                  <video
-                    src={project.media}
-                    className={`w-full h-full object-contain transition-transform duration-700 ${
-                      hoveredId === project.id ? "scale-105" : "scale-100"
-                    }`}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={project.media || "/placeholder.svg"}
-                    alt={project.title}
-                    className={`w-full h-full object-contain transition-transform duration-700 ${
-                      hoveredId === project.id ? "scale-105" : "scale-100"
-                    }`}
-                  />
-                )}
-                <div
-                  className="absolute inset-0 bg-primary origin-top"
-                  style={{
-                    transform: revealedImages.has(project.id) ? "scaleY(0)" : "scaleY(1)",
-                    transition: "transform 1.5s cubic-bezier(0.76, 0, 0.24, 1)",
-                  }}
-                />
-                {project.mediaType === "video" && (
-                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-md">
-                    <Icon name="Video" size={16} className="text-white" />
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <input
-                    type="text"
-                    value={project.title}
-                    onChange={(e) => handleUpdateProject(project.id, 'title', e.target.value)}
-                    className="text-2xl md:text-3xl font-medium mb-3 bg-transparent border-none outline-none focus:underline underline-offset-4 w-full"
-                    placeholder="Название изделия"
-                  />
-                  <div className="flex flex-col gap-1.5 text-base md:text-lg text-muted-foreground">
-                    <input
-                      type="text"
-                      value={project.category}
-                      onChange={(e) => handleUpdateProject(project.id, 'category', e.target.value)}
-                      className="bg-transparent border-none outline-none focus:underline underline-offset-2 w-full"
-                      placeholder="Категория"
-                    />
-                    <input
-                      type="text"
-                      value={project.location}
-                      onChange={(e) => handleUpdateProject(project.id, 'location', e.target.value)}
-                      className="bg-transparent border-none outline-none focus:underline underline-offset-2 w-full"
-                      placeholder="Описание"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <input
-                    type="text"
-                    value={project.year}
-                    onChange={(e) => handleUpdateProject(project.id, 'year', e.target.value)}
-                    className="text-muted-foreground/60 text-base bg-transparent border-none outline-none focus:underline underline-offset-2 w-16 text-right"
-                    placeholder="2024"
-                  />
-                  <button
-                    onClick={() => handleRemoveProject(project.id)}
-                    className="p-1 hover:bg-destructive/10 rounded transition-colors"
-                    title="Удалить"
-                  >
-                    <Icon name="Trash2" size={16} className="text-destructive" />
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
       </div>
 
-      {lightboxOpen && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center" 
-          onClick={closeLightbox}
-        >
+      {lightboxOpen && projectsList.length > 0 && (
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center">
           <button
-            onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-            className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors z-10"
-            title="Закрыть (Esc)"
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+            aria-label="Закрыть"
           >
             <Icon name="X" size={32} />
           </button>
 
           <button
-            onClick={(e) => { e.stopPropagation(); prevImage(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full transition-colors z-10"
-            title="Предыдущее (←)"
+            onClick={prevImage}
+            className="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
+            aria-label="Предыдущее"
           >
-            <Icon name="ChevronLeft" size={40} />
+            <Icon name="ChevronLeft" size={48} />
           </button>
 
           <button
-            onClick={(e) => { e.stopPropagation(); nextImage(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full transition-colors z-10"
-            title="Следующее (→)"
+            onClick={nextImage}
+            className="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
+            aria-label="Следующее"
           >
-            <Icon name="ChevronRight" size={40} />
+            <Icon name="ChevronRight" size={48} />
           </button>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full z-10">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
             <button
-              onClick={(e) => { e.stopPropagation(); handleZoomOut(); }}
-              className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={zoom <= 1}
-              title="Уменьшить"
+              onClick={handleZoomOut}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-colors"
+              aria-label="Уменьшить"
             >
-              <Icon name="ZoomOut" size={24} />
+              <Icon name="ZoomOut" size={24} className="text-white" />
             </button>
-            <span className="text-white py-2 px-3 min-w-[60px] text-center">{Math.round(zoom * 100)}%</span>
             <button
-              onClick={(e) => { e.stopPropagation(); handleZoomIn(); }}
-              className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={zoom >= 3}
-              title="Увеличить"
+              onClick={handleZoomIn}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-sm transition-colors"
+              aria-label="Увеличить"
             >
-              <Icon name="ZoomIn" size={24} />
+              <Icon name="ZoomIn" size={24} className="text-white" />
             </button>
           </div>
 
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white text-lg bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
-            {currentImageIndex + 1} / {projectsList.length}
-          </div>
-
-          <div 
-            className="relative w-[90vw] h-[90vh] overflow-hidden flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
+          <div
+            className="relative max-w-[90vw] max-h-[90vh] overflow-hidden cursor-move"
+            onDoubleClick={handleDoubleClick}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStartDrag}
+            onTouchMove={handleTouchMoveDrag}
+            onTouchEnd={handleTouchEndDrag}
           >
-            <div
-              className="relative"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStartDrag}
-              onTouchMove={handleTouchMoveDrag}
-              onTouchEnd={handleTouchEndDrag}
-              onDoubleClick={handleDoubleClick}
-              onWheel={handleWheel}
-              style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in' }}
-            >
-              {projectsList[currentImageIndex]?.mediaType === 'video' ? (
-                <video
-                  src={projectsList[currentImageIndex].media}
-                  className="max-w-[90vw] max-h-[90vh] object-contain select-none"
-                  style={{ 
-                    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
-                    transition: isDragging ? 'none' : 'transform 0.2s',
-                    transformOrigin: 'center center'
-                  }}
-                  controls
-                  autoPlay
-                  loop
-                  draggable={false}
-                />
-              ) : (
-                <img
-                  src={projectsList[currentImageIndex]?.media}
-                  alt={projectsList[currentImageIndex]?.title}
-                  className="max-w-[90vw] max-h-[90vh] object-contain select-none"
-                  style={{ 
-                    transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
-                    transition: isDragging ? 'none' : 'transform 0.2s',
-                    transformOrigin: 'center center'
-                  }}
-                  draggable={false}
-                />
-              )}
-            </div>
+            {projectsList[currentImageIndex].mediaType === "video" ? (
+              <video
+                src={projectsList[currentImageIndex].media}
+                className="max-w-full max-h-[90vh] object-contain"
+                style={{
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+                }}
+                controls
+                autoPlay
+                loop
+              />
+            ) : (
+              <img
+                src={projectsList[currentImageIndex].media}
+                alt={projectsList[currentImageIndex].title}
+                className="max-w-full max-h-[90vh] object-contain select-none"
+                style={{
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+                }}
+                draggable={false}
+              />
+            )}
           </div>
 
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-white max-w-2xl px-6">
-            <h3 className="text-2xl font-medium mb-2">{projectsList[currentImageIndex]?.title}</h3>
-            <p className="text-lg text-white/70">{projectsList[currentImageIndex]?.category}</p>
-            <p className="text-base text-white/60 mt-1">{projectsList[currentImageIndex]?.location}</p>
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white text-center">
+            <h3 className="text-xl font-medium mb-2">{projectsList[currentImageIndex].title}</h3>
+            <p className="text-sm text-gray-300">
+              {currentImageIndex + 1} / {projectsList.length}
+            </p>
           </div>
         </div>
       )}

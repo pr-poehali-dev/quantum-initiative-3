@@ -7,7 +7,7 @@ def get_db_connection():
     return psycopg2.connect(os.environ['DATABASE_URL'])
 
 def handler(event: dict, context) -> dict:
-    '''API для управления видео в галерее'''
+    '''API для управления медиа-контента (фото и видео) в галерее'''
     method = event.get('httpMethod', 'GET')
 
     if method == 'OPTIONS':
@@ -25,25 +25,29 @@ def handler(event: dict, context) -> dict:
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
 
-        # GET - получение списка всех видео
+        # GET - получение списка всех медиа
         if method == 'GET':
-            cur.execute('SELECT * FROM videos ORDER BY created_at DESC')
-            videos = cur.fetchall()
+            cur.execute('SELECT * FROM media ORDER BY created_at DESC')
+            media = cur.fetchall()
             cur.close()
             conn.close()
             
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps([dict(v) for v in videos], default=str)
+                'body': json.dumps([dict(m) for m in media], default=str)
             }
 
-        # POST - добавление нового видео
+        # POST - добавление нового медиа
         elif method == 'POST':
             body = json.loads(event.get('body', '{}'))
             url = body.get('url')
             title = body.get('title', '')
             description = body.get('description', '')
+            media_type = body.get('media_type', 'image')
+            category = body.get('category', '')
+            location = body.get('location', '')
+            year = body.get('year', '')
 
             if not url:
                 return {
@@ -53,33 +57,33 @@ def handler(event: dict, context) -> dict:
                 }
 
             cur.execute(
-                'INSERT INTO videos (url, title, description) VALUES (%s, %s, %s) RETURNING *',
-                (url, title, description)
+                'INSERT INTO media (url, title, description, media_type, category, location, year) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING *',
+                (url, title, description, media_type, category, location, year)
             )
             conn.commit()
-            video = cur.fetchone()
+            media = cur.fetchone()
             cur.close()
             conn.close()
 
             return {
                 'statusCode': 201,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps(dict(video), default=str)
+                'body': json.dumps(dict(media), default=str)
             }
 
-        # DELETE - удаление видео по ID
+        # DELETE - удаление медиа по ID
         elif method == 'DELETE':
             params = event.get('queryStringParameters', {}) or {}
-            video_id = params.get('id')
+            media_id = params.get('id')
 
-            if not video_id:
+            if not media_id:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Video ID is required'})
+                    'body': json.dumps({'error': 'Media ID is required'})
                 }
 
-            cur.execute('DELETE FROM videos WHERE id = %s RETURNING id', (video_id,))
+            cur.execute('DELETE FROM media WHERE id = %s RETURNING id', (media_id,))
             conn.commit()
             deleted = cur.fetchone()
             cur.close()
@@ -89,7 +93,7 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 404,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Video not found'})
+                    'body': json.dumps({'error': 'Media not found'})
                 }
 
             return {
