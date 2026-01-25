@@ -1,14 +1,27 @@
 import { useState, useEffect, useRef } from "react"
-import { ArrowUpRight } from "lucide-react"
+import Icon from "@/components/ui/icon"
 
-const projects = [
+type MediaType = 'image' | 'video'
+
+interface Project {
+  id: number
+  title: string
+  category: string
+  location: string
+  year: string
+  media: string
+  mediaType: MediaType
+}
+
+const projects: Project[] = [
   {
     id: 1,
     title: "Настенные панно",
     category: "Декор интерьера",
     location: "Резьба по дереву",
     year: "2024",
-    image: "/images/hously-1.png",
+    media: "/images/hously-1.png",
+    mediaType: "image",
   },
   {
     id: 2,
@@ -16,7 +29,8 @@ const projects = [
     category: "Аксессуары",
     location: "Ручная работа",
     year: "2024",
-    image: "/images/hously-2.png",
+    media: "/images/hously-2.png",
+    mediaType: "image",
   },
   {
     id: 3,
@@ -24,7 +38,8 @@ const projects = [
     category: "Сувениры",
     location: "Коллекция 2024",
     year: "2024",
-    image: "/images/hously-3.png",
+    media: "/images/hously-3.png",
+    mediaType: "image",
   },
   {
     id: 4,
@@ -32,7 +47,8 @@ const projects = [
     category: "Функциональный декор",
     location: "Дуб и орех",
     year: "2024",
-    image: "/images/hously-4.png",
+    media: "/images/hously-4.png",
+    mediaType: "image",
   },
 ]
 
@@ -76,7 +92,7 @@ export function Projects() {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
           >
             Смотреть все изделия
-            <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            <Icon name="ArrowUpRight" size={16} />
           </a>
         </div>
 
@@ -89,13 +105,26 @@ export function Projects() {
               onMouseLeave={() => setHoveredId(null)}
             >
               <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6">
-                <img
-                  src={project.image || "/placeholder.svg"}
-                  alt={project.title}
-                  className={`w-full h-full object-cover transition-transform duration-700 ${
-                    hoveredId === project.id ? "scale-105" : "scale-100"
-                  }`}
-                />
+                {project.mediaType === "video" ? (
+                  <video
+                    src={project.media}
+                    className={`w-full h-full object-cover transition-transform duration-700 ${
+                      hoveredId === project.id ? "scale-105" : "scale-100"
+                    }`}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={project.media || "/placeholder.svg"}
+                    alt={project.title}
+                    className={`w-full h-full object-cover transition-transform duration-700 ${
+                      hoveredId === project.id ? "scale-105" : "scale-100"
+                    }`}
+                  />
+                )}
                 <div
                   className="absolute inset-0 bg-primary origin-top"
                   style={{
@@ -103,6 +132,11 @@ export function Projects() {
                     transition: "transform 1.5s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 />
+                {project.mediaType === "video" && (
+                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-md">
+                    <Icon name="Video" size={16} className="text-white" />
+                  </div>
+                )}
               </div>
 
               <div className="flex items-start justify-between gap-4">
