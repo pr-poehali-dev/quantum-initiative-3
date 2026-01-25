@@ -121,7 +121,7 @@ export function Hero() {
       <div className="absolute inset-0 z-0">
         <img
           src="/images/hously-background.png"
-          alt="Минималистичный архитектурный интерьер"
+          alt="Деревянные изделия ручной работы"
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -137,15 +137,15 @@ export function Hero() {
         }}
       >
         <div className="mb-72 md:mb-60 lg:mb-80">
-          <p className="text-sm tracking-[0.3em] uppercase text-center text-secondary mb-0">{"Архитектурная студия"}</p>
+          <p className="text-sm tracking-[0.3em] uppercase text-center text-secondary mb-0">{"Студия декора из дерева"}</p>
 
           <h1
             ref={titleRef}
             className="text-7xl font-medium text-balance text-center text-white mb-0 tracking-tight leading-[0.9] lg:text-8xl"
           >
-            {"Создаем пространства"}
+            {"Тепло дерева"}
             <br />
-            <span className="text-orange-200">{"для жизни"}</span>
+            <span className="text-orange-200">{"в каждом изделии"}</span>
           </h1>
         </div>
       </div>
@@ -153,7 +153,7 @@ export function Hero() {
       <div className="absolute inset-0 z-20 pointer-events-none">
         <img
           src="/images/hously-foreground.png"
-          alt="Мраморная кухонная столешница"
+          alt="Декор из натурального дерева"
           className="w-full h-full object-cover object-center"
         />
       </div>
