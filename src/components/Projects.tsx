@@ -244,7 +244,7 @@ export function Projects() {
                   <img
                     src={project.media || "/placeholder.svg"}
                     alt={project.title}
-                    className={`w-full h-full object-cover transition-transform duration-700 ${
+                    className={`w-full h-full object-contain transition-transform duration-700 ${
                       hoveredId === project.id ? "scale-105" : "scale-100"
                     }`}
                   />
@@ -264,38 +264,37 @@ export function Projects() {
               </div>
 
               <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <input
                     type="text"
                     value={project.title}
                     onChange={(e) => handleUpdateProject(project.id, 'title', e.target.value)}
-                    className="text-xl font-medium mb-2 bg-transparent border-none outline-none focus:underline underline-offset-4 w-full"
+                    className="text-2xl md:text-3xl font-medium mb-3 bg-transparent border-none outline-none focus:underline underline-offset-4 w-full"
                     placeholder="Название изделия"
                   />
-                  <div className="flex gap-2 text-sm text-muted-foreground">
+                  <div className="flex flex-col gap-1.5 text-base md:text-lg text-muted-foreground">
                     <input
                       type="text"
                       value={project.category}
                       onChange={(e) => handleUpdateProject(project.id, 'category', e.target.value)}
-                      className="bg-transparent border-none outline-none focus:underline underline-offset-2"
+                      className="bg-transparent border-none outline-none focus:underline underline-offset-2 w-full"
                       placeholder="Категория"
                     />
-                    <span>·</span>
                     <input
                       type="text"
                       value={project.location}
                       onChange={(e) => handleUpdateProject(project.id, 'location', e.target.value)}
-                      className="bg-transparent border-none outline-none focus:underline underline-offset-2"
+                      className="bg-transparent border-none outline-none focus:underline underline-offset-2 w-full"
                       placeholder="Описание"
                     />
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <input
                     type="text"
                     value={project.year}
                     onChange={(e) => handleUpdateProject(project.id, 'year', e.target.value)}
-                    className="text-muted-foreground/60 text-sm bg-transparent border-none outline-none focus:underline underline-offset-2 w-16 text-right"
+                    className="text-muted-foreground/60 text-base bg-transparent border-none outline-none focus:underline underline-offset-2 w-16 text-right"
                     placeholder="2024"
                   />
                   <button
