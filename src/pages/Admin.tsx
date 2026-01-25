@@ -25,6 +25,8 @@ export default function Admin() {
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Media>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -171,6 +173,48 @@ export default function Admin() {
     }
   };
 
+  const startEdit = (media: Media) => {
+    setEditingId(media.id);
+    setEditForm({
+      title: media.title,
+      description: media.description,
+      category: media.category,
+      location: media.location,
+      year: media.year,
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const saveEdit = async (id: number) => {
+    try {
+      const response = await fetch(`${MEDIA_API}?id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Изменения сохранены',
+          description: 'Данные успешно обновлены',
+        });
+        setEditingId(null);
+        setEditForm({});
+        loadMedia();
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось сохранить изменения',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -279,20 +323,78 @@ export default function Admin() {
                 {images.map((media) => (
                   <div key={media.id} className="border rounded-lg overflow-hidden">
                     <img src={media.url} className="w-full aspect-video object-cover" alt={media.title} />
-                    <div className="p-4">
-                      <h3 className="font-medium truncate mb-2">{media.title}</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(media.created_at).toLocaleDateString('ru-RU')}
-                        </span>
-                        <button
-                          onClick={() => handleDelete(media.id)}
-                          className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
-                        >
-                          <Icon name="Trash2" size={16} />
-                          Удалить
-                        </button>
-                      </div>
+                    <div className="p-4 space-y-3">
+                      {editingId === media.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={editForm.title || ''}
+                            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Название"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.category || ''}
+                            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Категория"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.location || ''}
+                            onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Описание"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.year || ''}
+                            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Год"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => saveEdit(media.id)}
+                              className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+                            >
+                              Сохранить
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
+                            >
+                              Отмена
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-medium">{media.title}</h3>
+                          <p className="text-sm text-muted-foreground">{media.category}</p>
+                          <p className="text-sm text-muted-foreground">{media.location}</p>
+                          <div className="flex items-center justify-between pt-2">
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(media.created_at).toLocaleDateString('ru-RU')}
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => startEdit(media)}
+                                className="px-3 py-1 border rounded hover:bg-muted transition-colors flex items-center gap-1"
+                              >
+                                <Icon name="Pencil" size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(media.id)}
+                                className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
+                              >
+                                <Icon name="Trash2" size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -315,20 +417,78 @@ export default function Admin() {
                 {videos.map((media) => (
                   <div key={media.id} className="border rounded-lg overflow-hidden">
                     <video src={media.url} className="w-full aspect-video object-cover" controls />
-                    <div className="p-4">
-                      <h3 className="font-medium truncate mb-2">{media.title}</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(media.created_at).toLocaleDateString('ru-RU')}
-                        </span>
-                        <button
-                          onClick={() => handleDelete(media.id)}
-                          className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
-                        >
-                          <Icon name="Trash2" size={16} />
-                          Удалить
-                        </button>
-                      </div>
+                    <div className="p-4 space-y-3">
+                      {editingId === media.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={editForm.title || ''}
+                            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Название"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.category || ''}
+                            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Категория"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.location || ''}
+                            onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Описание"
+                          />
+                          <input
+                            type="text"
+                            value={editForm.year || ''}
+                            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
+                            className="w-full px-3 py-2 border rounded-md"
+                            placeholder="Год"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => saveEdit(media.id)}
+                              className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+                            >
+                              Сохранить
+                            </button>
+                            <button
+                              onClick={cancelEdit}
+                              className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
+                            >
+                              Отмена
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-medium">{media.title}</h3>
+                          <p className="text-sm text-muted-foreground">{media.category}</p>
+                          <p className="text-sm text-muted-foreground">{media.location}</p>
+                          <div className="flex items-center justify-between pt-2">
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(media.created_at).toLocaleDateString('ru-RU')}
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => startEdit(media)}
+                                className="px-3 py-1 border rounded hover:bg-muted transition-colors flex items-center gap-1"
+                              >
+                                <Icon name="Pencil" size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(media.id)}
+                                className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
+                              >
+                                <Icon name="Trash2" size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}

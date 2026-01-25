@@ -15,7 +15,7 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
             'body': ''
@@ -69,6 +69,73 @@ def handler(event: dict, context) -> dict:
                 'statusCode': 201,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps(dict(media), default=str)
+            }
+
+        # PUT - обновление медиа по ID
+        elif method == 'PUT':
+            params = event.get('queryStringParameters', {}) or {}
+            media_id = params.get('id')
+            
+            if not media_id:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Media ID is required'})
+                }
+
+            body = json.loads(event.get('body', '{}'))
+            title = body.get('title')
+            description = body.get('description')
+            category = body.get('category')
+            location = body.get('location')
+            year = body.get('year')
+
+            updates = []
+            values = []
+            
+            if title is not None:
+                updates.append('title = %s')
+                values.append(title)
+            if description is not None:
+                updates.append('description = %s')
+                values.append(description)
+            if category is not None:
+                updates.append('category = %s')
+                values.append(category)
+            if location is not None:
+                updates.append('location = %s')
+                values.append(location)
+            if year is not None:
+                updates.append('year = %s')
+                values.append(year)
+
+            if not updates:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'No fields to update'})
+                }
+
+            values.append(media_id)
+            query = f"UPDATE media SET {', '.join(updates)} WHERE id = %s RETURNING *"
+            
+            cur.execute(query, values)
+            conn.commit()
+            updated = cur.fetchone()
+            cur.close()
+            conn.close()
+
+            if not updated:
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Media not found'})
+                }
+
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps(dict(updated), default=str)
             }
 
         # DELETE - удаление медиа по ID
