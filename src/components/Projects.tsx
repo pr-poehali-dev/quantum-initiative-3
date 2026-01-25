@@ -230,6 +230,18 @@ export function Projects() {
     }
   }
 
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault()
+    const delta = e.deltaY > 0 ? -0.2 : 0.2
+    setZoom((prev) => {
+      const newZoom = Math.min(Math.max(prev + delta, 1), 3)
+      if (newZoom === 1) {
+        setPosition({ x: 0, y: 0 })
+      }
+      return newZoom
+    })
+  }
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (zoom <= 1) return
     setIsDragging(true)
@@ -521,6 +533,7 @@ export function Projects() {
               onTouchMove={handleTouchMoveDrag}
               onTouchEnd={handleTouchEndDrag}
               onDoubleClick={handleDoubleClick}
+              onWheel={handleWheel}
               style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in' }}
             >
               {projectsList[currentImageIndex]?.mediaType === 'video' ? (
