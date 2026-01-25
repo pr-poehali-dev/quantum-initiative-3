@@ -56,16 +56,9 @@ export function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [revealedImages, setRevealedImages] = useState<Set<number>>(new Set())
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [projectsList, setProjectsList] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('woodcraft-projects')
-    return saved ? JSON.parse(saved) : projects
-  })
+  const [projectsList, setProjectsList] = useState<Project[]>(projects)
   const [isAdding, setIsAdding] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    localStorage.setItem('woodcraft-projects', JSON.stringify(projectsList))
-  }, [projectsList])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -93,7 +86,7 @@ export function Projects() {
     setIsAdding(true)
   }
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) {
       setIsAdding(false)
@@ -101,30 +94,25 @@ export function Projects() {
     }
 
     const mediaType: MediaType = file.type.startsWith('video/') ? 'video' : 'image'
-    
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const mediaUrl = event.target?.result as string
+    const mediaUrl = URL.createObjectURL(file)
 
-      const newProject: Project = {
-        id: Date.now(),
-        title: "Новое изделие",
-        category: "Категория",
-        location: "Описание",
-        year: new Date().getFullYear().toString(),
-        media: mediaUrl,
-        mediaType,
-      }
-
-      setProjectsList([newProject, ...projectsList])
-      setRevealedImages((prev) => new Set(prev).add(newProject.id))
-      setIsAdding(false)
-      
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
+    const newProject: Project = {
+      id: Date.now(),
+      title: "Новое изделие",
+      category: "Категория",
+      location: "Описание",
+      year: new Date().getFullYear().toString(),
+      media: mediaUrl,
+      mediaType,
     }
-    reader.readAsDataURL(file)
+
+    setProjectsList([newProject, ...projectsList])
+    setRevealedImages((prev) => new Set(prev).add(newProject.id))
+    setIsAdding(false)
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleRemoveProject = (id: number) => {
