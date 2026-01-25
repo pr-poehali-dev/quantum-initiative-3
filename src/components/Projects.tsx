@@ -67,6 +67,9 @@ export function Projects() {
   const [zoom, setZoom] = useState(1)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -170,21 +173,25 @@ export function Projects() {
     setCurrentImageIndex(index)
     setLightboxOpen(true)
     setZoom(1)
+    setPosition({ x: 0, y: 0 })
   }
 
   const closeLightbox = () => {
     setLightboxOpen(false)
     setZoom(1)
+    setPosition({ x: 0, y: 0 })
   }
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % projectsList.length)
     setZoom(1)
+    setPosition({ x: 0, y: 0 })
   }
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + projectsList.length) % projectsList.length)
     setZoom(1)
+    setPosition({ x: 0, y: 0 })
   }
 
   const handleZoomIn = () => {
@@ -192,33 +199,73 @@ export function Projects() {
   }
 
   const handleZoomOut = () => {
-    setZoom((prev) => Math.max(prev - 0.5, 1))
+    setZoom((prev) => {
+      const newZoom = Math.max(prev - 0.5, 1)
+      if (newZoom === 1) {
+        setPosition({ x: 0, y: 0 })
+      }
+      return newZoom
+    })
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoom <= 1) return
+    setIsDragging(true)
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y })
   }
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || zoom <= 1) return
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    })
   }
 
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > 50
-    const isRightSwipe = distance < -50
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
 
-    if (isLeftSwipe) {
-      nextImage()
+  const handleTouchStartDrag = (e: React.TouchEvent) => {
+    if (zoom <= 1) {
+      setTouchStart(e.targetTouches[0].clientX)
+      return
     }
-    if (isRightSwipe) {
-      prevImage()
-    }
-
-    setTouchStart(0)
-    setTouchEnd(0)
+    setIsDragging(true)
+    setDragStart({
+      x: e.targetTouches[0].clientX - position.x,
+      y: e.targetTouches[0].clientY - position.y
+    })
   }
+
+  const handleTouchMoveDrag = (e: React.TouchEvent) => {
+    if (zoom <= 1) {
+      setTouchEnd(e.targetTouches[0].clientX)
+      return
+    }
+    if (!isDragging) return
+    setPosition({
+      x: e.targetTouches[0].clientX - dragStart.x,
+      y: e.targetTouches[0].clientY - dragStart.y
+    })
+  }
+
+  const handleTouchEndDrag = () => {
+    setIsDragging(false)
+    if (zoom <= 1 && touchStart && touchEnd) {
+      const distance = touchStart - touchEnd
+      const isLeftSwipe = distance > 50
+      const isRightSwipe = distance < -50
+
+      if (isLeftSwipe) nextImage()
+      if (isRightSwipe) prevImage()
+
+      setTouchStart(0)
+      setTouchEnd(0)
+    }
+  }
+
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -389,9 +436,6 @@ export function Projects() {
         <div 
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center" 
           onClick={closeLightbox}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         >
           <button
             onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
@@ -442,24 +486,40 @@ export function Projects() {
           </div>
 
           <div 
-            className="max-w-[90vw] max-h-[90vh] overflow-auto"
+            className="max-w-[90vw] max-h-[90vh] overflow-hidden flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStartDrag}
+            onTouchMove={handleTouchMoveDrag}
+            onTouchEnd={handleTouchEndDrag}
+            style={{ cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
           >
             {projectsList[currentImageIndex]?.mediaType === 'video' ? (
               <video
                 src={projectsList[currentImageIndex].media}
-                className="max-w-full max-h-[90vh] object-contain"
-                style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s' }}
+                className="max-w-full max-h-[90vh] object-contain select-none"
+                style={{ 
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transition: isDragging ? 'none' : 'transform 0.2s'
+                }}
                 controls
                 autoPlay
                 loop
+                draggable={false}
               />
             ) : (
               <img
                 src={projectsList[currentImageIndex]?.media}
                 alt={projectsList[currentImageIndex]?.title}
-                className="max-w-full max-h-[90vh] object-contain"
-                style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s' }}
+                className="max-w-full max-h-[90vh] object-contain select-none"
+                style={{ 
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transition: isDragging ? 'none' : 'transform 0.2s'
+                }}
+                draggable={false}
               />
             )}
           </div>
