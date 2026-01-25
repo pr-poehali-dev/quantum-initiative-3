@@ -62,6 +62,9 @@ export function Projects() {
   })
   const [isAdding, setIsAdding] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [zoom, setZoom] = useState(1)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -161,6 +164,46 @@ export function Projects() {
     ))
   }
 
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index)
+    setLightboxOpen(true)
+    setZoom(1)
+  }
+
+  const closeLightbox = () => {
+    setLightboxOpen(false)
+    setZoom(1)
+  }
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % projectsList.length)
+    setZoom(1)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + projectsList.length) % projectsList.length)
+    setZoom(1)
+  }
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(prev + 0.5, 3))
+  }
+
+  const handleZoomOut = () => {
+    setZoom((prev) => Math.max(prev - 0.5, 1))
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [lightboxOpen])
+
   return (
     <section id="projects" className="py-32 md:py-29 bg-secondary/50">
       <div className="container mx-auto px-6 md:px-12">
@@ -224,11 +267,15 @@ export function Projects() {
           {projectsList.map((project, index) => (
             <article
               key={project.id}
-              className="group cursor-pointer"
+              className="group"
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              <div ref={(el) => (imageRefs.current[index] = el)} className="relative overflow-hidden aspect-[4/3] mb-6 bg-secondary">
+              <div 
+                ref={(el) => (imageRefs.current[index] = el)} 
+                className="relative overflow-hidden aspect-[4/3] mb-6 bg-secondary cursor-pointer"
+                onClick={() => openLightbox(index)}
+              >
                 {project.mediaType === "video" ? (
                   <video
                     src={project.media}
@@ -310,6 +357,87 @@ export function Projects() {
           ))}
         </div>
       </div>
+
+      {lightboxOpen && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center" onClick={closeLightbox}>
+          <button
+            onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
+            className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+            title="Закрыть (Esc)"
+          >
+            <Icon name="X" size={32} />
+          </button>
+
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+            title="Предыдущее (←)"
+          >
+            <Icon name="ChevronLeft" size={40} />
+          </button>
+
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+            title="Следующее (→)"
+          >
+            <Icon name="ChevronRight" size={40} />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full z-10">
+            <button
+              onClick={(e) => { e.stopPropagation(); handleZoomOut(); }}
+              className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={zoom <= 1}
+              title="Уменьшить"
+            >
+              <Icon name="ZoomOut" size={24} />
+            </button>
+            <span className="text-white py-2 px-3 min-w-[60px] text-center">{Math.round(zoom * 100)}%</span>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleZoomIn(); }}
+              className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={zoom >= 3}
+              title="Увеличить"
+            >
+              <Icon name="ZoomIn" size={24} />
+            </button>
+          </div>
+
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white text-lg bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">
+            {currentImageIndex + 1} / {projectsList.length}
+          </div>
+
+          <div 
+            className="max-w-[90vw] max-h-[90vh] overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {projectsList[currentImageIndex]?.mediaType === 'video' ? (
+              <video
+                src={projectsList[currentImageIndex].media}
+                className="max-w-full max-h-[90vh] object-contain"
+                style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s' }}
+                controls
+                autoPlay
+                loop
+              />
+            ) : (
+              <img
+                src={projectsList[currentImageIndex]?.media}
+                alt={projectsList[currentImageIndex]?.title}
+                className="max-w-full max-h-[90vh] object-contain"
+                style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s' }}
+              />
+            )}
+          </div>
+
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-white max-w-2xl px-6">
+            <h3 className="text-2xl font-medium mb-2">{projectsList[currentImageIndex]?.title}</h3>
+            <p className="text-lg text-white/70">{projectsList[currentImageIndex]?.category}</p>
+            <p className="text-base text-white/60 mt-1">{projectsList[currentImageIndex]?.location}</p>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
