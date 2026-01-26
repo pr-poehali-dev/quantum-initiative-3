@@ -164,11 +164,29 @@ export default function Admin() {
     setUploading(true);
 
     try {
+      // Шаг 1: Загрузить файл в S3
+      const uploadResponse = await fetch(UPLOAD_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file: previewFile.url,
+          type: previewFile.type === 'video' ? 'video/mp4' : 'image/jpeg',
+        }),
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Ошибка загрузки файла в хранилище');
+      }
+
+      const uploadData = await uploadResponse.json();
+      const fileUrl = uploadData.url;
+
+      // Шаг 2: Сохранить URL в базу
       const addResponse = await fetch(MEDIA_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          url: previewFile.url,
+          url: fileUrl,
           title: '',
           description: '',
           media_type: previewFile.type,
