@@ -161,41 +161,37 @@ export default function Admin() {
 
   const handleMasterPhotoUpload = async (masterId: number, file: File) => {
     try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result as string;
+      const compressedDataUrl = await compressImage(file);
+      
+      const uploadResponse = await fetch(UPLOAD_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          file: compressedDataUrl,
+          type: 'image/jpeg',
+        }),
+      });
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
         
-        const uploadResponse = await fetch(UPLOAD_API, {
-          method: 'POST',
+        const updateResponse = await fetch(MASTERS_API, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            file: base64,
-            type: file.type,
+            id: masterId,
+            photo_url: uploadData.url,
           }),
         });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          
-          const updateResponse = await fetch(MASTERS_API, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: masterId,
-              photo_url: uploadData.url,
-            }),
+        if (updateResponse.ok) {
+          toast({
+            title: 'Фото загружено',
+            description: 'Фотография мастера обновлена',
           });
-
-          if (updateResponse.ok) {
-            toast({
-              title: 'Фото загружено',
-              description: 'Фотография мастера обновлена',
-            });
-            loadMasters();
-          }
+          loadMasters();
         }
-      };
-      reader.readAsDataURL(file);
+      }
     } catch (error) {
       toast({
         title: 'Ошибка',
@@ -240,6 +236,42 @@ export default function Admin() {
     }
   };
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 1920;
+          
+          if (width > maxSize || height > maxSize) {
+            if (width > height) {
+              height = (height / width) * maxSize;
+              width = maxSize;
+            } else {
+              width = (width / height) * maxSize;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -253,17 +285,36 @@ export default function Admin() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result as string;
-      const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
-      setPreviewFile({
-        url: dataUrl,
-        type: mediaType,
-        name: file.name,
-      });
-    };
-    reader.readAsDataURL(file);
+    const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+    
+    if (mediaType === 'image') {
+      try {
+        const compressedDataUrl = await compressImage(file);
+        setPreviewFile({
+          url: compressedDataUrl,
+          type: mediaType,
+          name: file.name,
+        });
+      } catch (error) {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось обработать изображение',
+          variant: 'destructive',
+        });
+      }
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        setPreviewFile({
+          url: dataUrl,
+          type: mediaType,
+          name: file.name,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+    
     e.target.value = '';
   };
 
