@@ -307,9 +307,9 @@ export default function Admin() {
             <div className="space-y-4">
               <div className="border rounded-lg overflow-hidden bg-muted">
                 {previewFile.type === 'video' ? (
-                  <video src={previewFile.url} className="w-full aspect-[4/3] object-cover" controls />
+                  <video src={previewFile.url} className="w-full aspect-[4/3] object-contain" controls />
                 ) : (
-                  <img src={previewFile.url} className="w-full aspect-[4/3] object-cover" alt="Предпросмотр" />
+                  <img src={previewFile.url} className="w-full aspect-[4/3] object-contain" alt="Предпросмотр" />
                 )}
               </div>
               <div className="flex items-center gap-4">
