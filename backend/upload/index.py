@@ -23,14 +23,16 @@ def handler(event: dict, context) -> dict:
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
 
     if method != 'POST':
         return {
             'statusCode': 405,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Method not allowed'})
+            'body': json.dumps({'error': 'Method not allowed'}),
+            'isBase64Encoded': False
         }
 
     try:
@@ -42,7 +44,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'No file provided'})
+                'body': json.dumps({'error': 'No file provided'}),
+                'isBase64Encoded': False
             }
 
         file_bytes = base64.b64decode(file_data.split(',')[1] if ',' in file_data else file_data)
@@ -74,12 +77,14 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({
                 'url': cdn_url,
                 'uploaded_at': datetime.now().isoformat()
-            })
+            }),
+            'isBase64Encoded': False
         }
         
     except Exception as e:
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
         }

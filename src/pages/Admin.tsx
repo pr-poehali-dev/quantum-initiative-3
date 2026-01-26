@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const AUTH_API = 'https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c';
 const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
-const UPLOAD_API = 'https://functions.poehali.dev/79ec0224-ad03-4786-a0d7-bea6e8ce3d08';
+const UPLOAD_API = 'https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f';
 
 interface Media {
   id: number;
