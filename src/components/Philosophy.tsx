@@ -13,23 +13,23 @@ interface Master {
 
 const philosophyItems = [
   {
-    title: "Профессиональные мастера",
+    title: "Натуральность материала",
     description:
-      "Наши парикмахеры регулярно повышают квалификацию и следят за последними трендами. Ваши волосы в надёжных руках.",
+      "Каждое изделие сохраняет естественную красоту дерева. Мы подчеркиваем уникальный рисунок, текстуру и тепло натурального материала.",
   },
   {
-    title: "Качественная косметика",
+    title: "Ручная работа",
     description:
-      "Используем только профессиональные средства для ухода за волосами. Каждый продукт подбирается индивидуально.",
+      "Каждый элемент декора создается вручную с вниманием к деталям. Наши мастера вкладывают душу в каждое изделие, делая его особенным.",
   },
   {
-    title: "Индивидуальный подход",
+    title: "Уникальность каждого предмета",
     description:
-      "Мы слушаем ваши пожелания и предлагаем решения, которые подчеркнут вашу индивидуальность и стиль.",
+      "Двух одинаковых изделий не существует. Каждый элемент декора имеет свою историю и характер, подчеркивая индивидуальность вашего пространства.",
   },
   {
-    title: "Уютная атмосфера",
-    description: "В нашем салоне вы почувствуете себя комфортно и расслабленно. Мы создали пространство для вашего отдыха и преображения.",
+    title: "Экологичность и долговечность",
+    description: "Мы используем только качественные породы дерева и экологичные покрытия. Наши изделия служат десятилетиями, сохраняя свою красоту и качество.",
   },
 ]
 
@@ -75,17 +75,17 @@ export function Philosophy() {
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left column - Title and image */}
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">О нас</p>
+            <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Наша философия</p>
             <h2 className="text-6xl md:text-6xl font-medium leading-[1.15] tracking-tight mb-6 text-balance lg:text-8xl">
-              Красота с
+              Ремесло с
               <br />
-              <HighlightedText>заботой</HighlightedText>
+              <HighlightedText>душой</HighlightedText>
             </h2>
 
             <div className="relative hidden lg:block">
               <img
                 src="/images/exterior.png"
-                alt="Интерьер салона красоты"
+                alt="Деревянные сувениры и декор"
                 className="opacity-90 relative z-10 w-auto"
               />
             </div>
@@ -94,7 +94,7 @@ export function Philosophy() {
           {/* Right column - Description and Philosophy items */}
           <div className="space-y-6 lg:pt-48">
             <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-12">
-              Ваши волосы — это ваша визитная карточка. Мы создаём образы, которые подчеркивают вашу уникальность и стиль.
+              Дерево - это больше, чем материал. Это тепло, уют и частичка природы в вашем доме. Мы создаем декор, который наполняет пространство жизнью.
             </p>
 
             {philosophyItems.map((item, index) => (

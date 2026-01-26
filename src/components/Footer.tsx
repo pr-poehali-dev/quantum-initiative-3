@@ -9,17 +9,17 @@ export function Footer() {
               <img src="/images/hously-logo.svg" alt="Пространство" width={120} height={32} className="w-auto h-6" />
             </a>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
-              Профессиональные парикмахерские услуги. Подчеркиваем вашу индивидуальность и стиль.
+              Создаем уникальные деревянные изделия ручной работы. Тепло природы в каждом предмете.
             </p>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="text-sm font-medium mb-4">Навигация</h4>
+            <h4 className="text-sm font-medium mb-4">Студия</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
                 <a href="#projects" className="hover:text-foreground transition-colors">
-                  Портфолио
+                  Изделия
                 </a>
               </li>
               <li>
@@ -29,7 +29,7 @@ export function Footer() {
               </li>
               <li>
                 <a href="#about" className="hover:text-foreground transition-colors">
-                  Мастера
+                  Философия
                 </a>
               </li>
               <li>
@@ -45,13 +45,13 @@ export function Footer() {
             <h4 className="text-sm font-medium mb-4">Связь</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="mailto:krasavica@salon.ru" className="hover:text-foreground transition-colors">
-                  krasavica@salon.ru
+                <a href="mailto:hello@dekora.ru" className="hover:text-foreground transition-colors">
+                  hello@dekora.ru
                 </a>
               </li>
               <li>
-                <a href="tel:+79001234567" className="hover:text-foreground transition-colors">
-                  +7 (900) 123-45-67
+                <a href="tel:+74951234567" className="hover:text-foreground transition-colors">
+                  +7 (495) 123-45-67
                 </a>
               </li>
               <li>
@@ -70,7 +70,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© 2025 Салон Красавица. Все права защищены.</p>
+          <p>© 2025 Студия Декора. Все права защищены.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-foreground transition-colors">
               Политика конфиденциальности
