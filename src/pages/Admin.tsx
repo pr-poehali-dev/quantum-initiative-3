@@ -111,10 +111,10 @@ export default function Admin() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 50 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       toast({
         title: 'Файл слишком большой',
-        description: 'Максимальный размер: 50 МБ',
+        description: 'Максимальный размер: 5 МБ. Сожмите видео перед загрузкой.',
         variant: 'destructive',
       });
       return;
@@ -126,52 +126,32 @@ export default function Admin() {
       const reader = new FileReader();
       reader.onload = async (event) => {
         try {
-          const base64 = event.target?.result as string;
+          const dataUrl = event.target?.result as string;
           const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
 
-          const uploadResponse = await fetch(UPLOAD_API, {
+          const addResponse = await fetch(MEDIA_API, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              file: base64,
-              type: file.type,
+              url: dataUrl,
+              title: file.name,
+              description: '',
+              media_type: mediaType,
+              category: '',
+              location: '',
+              year: new Date().getFullYear().toString(),
             }),
           });
 
-          if (!uploadResponse.ok) {
-            const errorData = await uploadResponse.json().catch(() => ({}));
-            throw new Error(errorData.error || `HTTP ${uploadResponse.status}`);
-          }
-
-          const uploadData = await uploadResponse.json();
-
-          if (uploadData.url) {
-            const addResponse = await fetch(MEDIA_API, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                url: uploadData.url,
-                title: file.name,
-                description: '',
-                media_type: mediaType,
-                category: '',
-                location: '',
-                year: new Date().getFullYear().toString(),
-              }),
+          if (addResponse.ok) {
+            toast({
+              title: 'Файл загружен',
+              description: 'Медиа успешно добавлено в галерею',
             });
-
-            if (addResponse.ok) {
-              toast({
-                title: 'Файл загружен',
-                description: 'Медиа успешно добавлено в галерею',
-              });
-              loadMedia();
-            } else {
-              const errorData = await addResponse.json().catch(() => ({}));
-              throw new Error(errorData.error || 'Ошибка сохранения в базу');
-            }
+            loadMedia();
           } else {
-            throw new Error('Не получен URL файла');
+            const errorData = await addResponse.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Ошибка сохранения в базу');
           }
         } catch (error) {
           console.error('Upload error:', error);
