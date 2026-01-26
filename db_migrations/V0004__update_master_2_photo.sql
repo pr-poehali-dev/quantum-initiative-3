@@ -1,0 +1,1 @@
+UPDATE masters SET photo_url = 'https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/608d16e7-a404-49d3-9965-0d0411412b70.jpg' WHERE id = 2;
