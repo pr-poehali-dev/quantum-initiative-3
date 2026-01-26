@@ -18,7 +18,8 @@ def handler(event: dict, context) -> dict:
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
 
     try:
@@ -27,15 +28,53 @@ def handler(event: dict, context) -> dict:
 
         # GET - получение списка всех медиа
         if method == 'GET':
-            cur.execute('SELECT * FROM media ORDER BY created_at DESC')
+            params = event.get('queryStringParameters', {}) or {}
+            media_id = params.get('id')
+            limit = int(params.get('limit', 20))
+            offset = int(params.get('offset', 0))
+            
+            # Если запрашивают конкретную запись - вернуть с url
+            if media_id:
+                cur.execute('SELECT * FROM media WHERE id = %s', (media_id,))
+                media = cur.fetchone()
+                cur.close()
+                conn.close()
+                
+                if not media:
+                    return {
+                        'statusCode': 404,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'Media not found'}),
+                        'isBase64Encoded': False
+                    }
+                
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps(dict(media), default=str),
+                    'isBase64Encoded': False
+                }
+            
+            # Иначе - список без url (только метаданные)
+            cur.execute('SELECT id, title, description, media_type, category, location, year, created_at FROM media ORDER BY created_at DESC LIMIT %s OFFSET %s', (limit, offset))
             media = cur.fetchall()
+            
+            cur.execute('SELECT COUNT(*) as total FROM media')
+            total = cur.fetchone()['total']
+            
             cur.close()
             conn.close()
             
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps([dict(m) for m in media], default=str)
+                'body': json.dumps({
+                    'items': [dict(m) for m in media],
+                    'total': total,
+                    'limit': limit,
+                    'offset': offset
+                }, default=str),
+                'isBase64Encoded': False
             }
 
         # POST - добавление нового медиа
@@ -53,7 +92,8 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'URL is required'})
+                    'body': json.dumps({'error': 'URL is required'}),
+                    'isBase64Encoded': False
                 }
 
             cur.execute(
@@ -68,7 +108,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 201,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps(dict(media), default=str)
+                'body': json.dumps(dict(media), default=str),
+                'isBase64Encoded': False
             }
 
         # PUT - обновление медиа по ID
@@ -80,7 +121,8 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Media ID is required'})
+                    'body': json.dumps({'error': 'Media ID is required'}),
+                    'isBase64Encoded': False
                 }
 
             body = json.loads(event.get('body', '{}'))
@@ -113,7 +155,8 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'No fields to update'})
+                    'body': json.dumps({'error': 'No fields to update'}),
+                    'isBase64Encoded': False
                 }
 
             values.append(media_id)
@@ -129,13 +172,15 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 404,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Media not found'})
+                    'body': json.dumps({'error': 'Media not found'}),
+                    'isBase64Encoded': False
                 }
 
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps(dict(updated), default=str)
+                'body': json.dumps(dict(updated), default=str),
+                'isBase64Encoded': False
             }
 
         # DELETE - удаление медиа по ID
@@ -147,7 +192,8 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Media ID is required'})
+                    'body': json.dumps({'error': 'Media ID is required'}),
+                    'isBase64Encoded': False
                 }
 
             cur.execute('DELETE FROM media WHERE id = %s RETURNING id', (media_id,))
@@ -160,20 +206,23 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 404,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Media not found'})
+                    'body': json.dumps({'error': 'Media not found'}),
+                    'isBase64Encoded': False
                 }
 
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'success': True, 'id': deleted['id']})
+                'body': json.dumps({'success': True, 'id': deleted['id']}),
+                'isBase64Encoded': False
             }
 
         else:
             return {
                 'statusCode': 405,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Method not allowed'})
+                'body': json.dumps({'error': 'Method not allowed'}),
+                'isBase64Encoded': False
             }
 
     except Exception as e:
@@ -182,5 +231,6 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
         }

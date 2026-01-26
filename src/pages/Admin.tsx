@@ -9,7 +9,7 @@ const UPLOAD_API = 'https://functions.poehali.dev/79ec0224-ad03-4786-a0d7-bea6e8
 
 interface Media {
   id: number;
-  url: string;
+  url?: string;
   title: string;
   description: string;
   media_type: 'image' | 'video';
@@ -19,10 +19,15 @@ interface Media {
   created_at: string;
 }
 
+interface MediaWithUrl extends Media {
+  url: string;
+}
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [mediaList, setMediaList] = useState<Media[]>([]);
+  const [mediaUrls, setMediaUrls] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -94,9 +99,15 @@ export default function Admin() {
   const loadMedia = async () => {
     setLoading(true);
     try {
-      const response = await fetch(MEDIA_API);
+      const response = await fetch(`${MEDIA_API}?limit=20`);
       const data = await response.json();
-      setMediaList(Array.isArray(data) ? data : []);
+      const items = data.items || (Array.isArray(data) ? data : []);
+      setMediaList(items);
+      
+      // Загрузить url для каждого медиа
+      items.forEach(async (media: Media) => {
+        loadMediaUrl(media.id);
+      });
     } catch (error) {
       toast({
         title: 'Ошибка',
@@ -108,14 +119,26 @@ export default function Admin() {
     }
   };
 
+  const loadMediaUrl = async (id: number) => {
+    try {
+      const response = await fetch(`${MEDIA_API}?id=${id}`);
+      const data = await response.json();
+      if (data.url) {
+        setMediaUrls(prev => ({ ...prev, [id]: data.url }));
+      }
+    } catch (error) {
+      console.error(`Failed to load url for media ${id}:`, error);
+    }
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 500 * 1024) {
       toast({
         title: 'Файл слишком большой',
-        description: 'Максимальный размер: 5 МБ. Сожмите видео перед загрузкой.',
+        description: 'Максимальный размер: 500 КБ. Сожмите изображение.',
         variant: 'destructive',
       });
       return;
@@ -387,7 +410,13 @@ export default function Admin() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {images.map((media) => (
                   <div key={media.id} className="border rounded-lg overflow-hidden">
-                    <img src={media.url} className="w-full aspect-video object-cover" alt={media.title} />
+                    {mediaUrls[media.id] ? (
+                      <img src={mediaUrls[media.id]} className="w-full aspect-[4/3] object-contain bg-gray-100" alt={media.title} />
+                    ) : (
+                      <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                        <Icon name="Loader2" className="animate-spin" size={32} />
+                      </div>
+                    )}
                     <div className="p-4 space-y-3">
                       {editingId === media.id ? (
                         <>
@@ -481,7 +510,13 @@ export default function Admin() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {videos.map((media) => (
                   <div key={media.id} className="border rounded-lg overflow-hidden">
-                    <video src={media.url} className="w-full aspect-video object-cover" controls />
+                    {mediaUrls[media.id] ? (
+                      <video src={mediaUrls[media.id]} className="w-full aspect-[4/3] object-contain bg-gray-100" controls />
+                    ) : (
+                      <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                        <Icon name="Loader2" className="animate-spin" size={32} />
+                      </div>
+                    )}
                     <div className="p-4 space-y-3">
                       {editingId === media.id ? (
                         <>

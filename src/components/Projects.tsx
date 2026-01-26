@@ -36,22 +36,44 @@ export function Projects() {
 
   const loadProjects = async () => {
     try {
-      const response = await fetch(MEDIA_API)
+      const response = await fetch(`${MEDIA_API}?limit=20`)
       const data = await response.json()
       
-      const projects: Project[] = data.map((item: any) => ({
-        id: item.id,
-        title: item.title || 'Без названия',
-        category: item.category || 'Категория',
-        location: item.location || 'Описание',
-        year: item.year || new Date().getFullYear().toString(),
-        media: item.url,
-        mediaType: item.media_type as MediaType,
-      }))
+      const items = data.items || (Array.isArray(data) ? data : [])
       
-      setProjectsList(projects)
-      if (projects.length > 0) {
-        setRevealedImages(new Set([projects[0].id]))
+      // Загрузить url для каждого медиа
+      const projectsWithUrls = await Promise.all(
+        items.map(async (item: any) => {
+          try {
+            const urlResponse = await fetch(`${MEDIA_API}?id=${item.id}`)
+            const urlData = await urlResponse.json()
+            return {
+              id: item.id,
+              title: item.title || 'Без названия',
+              category: item.category || 'Категория',
+              location: item.location || 'Описание',
+              year: item.year || new Date().getFullYear().toString(),
+              media: urlData.url || '',
+              mediaType: item.media_type as MediaType,
+            }
+          } catch (error) {
+            console.error(`Failed to load url for item ${item.id}:`, error)
+            return {
+              id: item.id,
+              title: item.title || 'Без названия',
+              category: item.category || 'Категория',
+              location: item.location || 'Описание',
+              year: item.year || new Date().getFullYear().toString(),
+              media: '',
+              mediaType: item.media_type as MediaType,
+            }
+          }
+        })
+      )
+      
+      setProjectsList(projectsWithUrls)
+      if (projectsWithUrls.length > 0) {
+        setRevealedImages(new Set([projectsWithUrls[0].id]))
       }
     } catch (error) {
       console.error('Failed to load projects:', error)
