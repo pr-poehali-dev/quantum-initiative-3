@@ -125,53 +125,83 @@ export default function Admin() {
     try {
       const reader = new FileReader();
       reader.onload = async (event) => {
-        const base64 = event.target?.result as string;
-        const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+        try {
+          const base64 = event.target?.result as string;
+          const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
 
-        const uploadResponse = await fetch(UPLOAD_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            file: base64,
-            type: file.type,
-          }),
-        });
-
-        const uploadData = await uploadResponse.json();
-
-        if (uploadData.url) {
-          const addResponse = await fetch(MEDIA_API, {
+          const uploadResponse = await fetch(UPLOAD_API, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              url: uploadData.url,
-              title: file.name,
-              description: '',
-              media_type: mediaType,
-              category: '',
-              location: '',
-              year: new Date().getFullYear().toString(),
+              file: base64,
+              type: file.type,
             }),
           });
 
-          if (addResponse.ok) {
-            toast({
-              title: 'Файл загружен',
-              description: 'Медиа успешно добавлено в галерею',
-            });
-            loadMedia();
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json().catch(() => ({}));
+            throw new Error(errorData.error || `HTTP ${uploadResponse.status}`);
           }
+
+          const uploadData = await uploadResponse.json();
+
+          if (uploadData.url) {
+            const addResponse = await fetch(MEDIA_API, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                url: uploadData.url,
+                title: file.name,
+                description: '',
+                media_type: mediaType,
+                category: '',
+                location: '',
+                year: new Date().getFullYear().toString(),
+              }),
+            });
+
+            if (addResponse.ok) {
+              toast({
+                title: 'Файл загружен',
+                description: 'Медиа успешно добавлено в галерею',
+              });
+              loadMedia();
+            } else {
+              const errorData = await addResponse.json().catch(() => ({}));
+              throw new Error(errorData.error || 'Ошибка сохранения в базу');
+            }
+          } else {
+            throw new Error('Не получен URL файла');
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          toast({
+            title: 'Ошибка загрузки',
+            description: error instanceof Error ? error.message : 'Не удалось загрузить файл',
+            variant: 'destructive',
+          });
+        } finally {
+          setUploading(false);
         }
+      };
+
+      reader.onerror = () => {
+        toast({
+          title: 'Ошибка чтения файла',
+          description: 'Не удалось прочитать файл',
+          variant: 'destructive',
+        });
+        setUploading(false);
       };
 
       reader.readAsDataURL(file);
     } catch (error) {
+      console.error('File read error:', error);
       toast({
-        title: 'Ошибка загрузки',
-        description: 'Не удалось загрузить файл',
+        title: 'Ошибка',
+        description: 'Не удалось начать загрузку',
         variant: 'destructive',
       });
-    } finally {
       setUploading(false);
     }
   };
