@@ -96,7 +96,7 @@ export default function Admin() {
     try {
       const response = await fetch(MEDIA_API);
       const data = await response.json();
-      setMediaList(data);
+      setMediaList(Array.isArray(data) ? data : []);
     } catch (error) {
       toast({
         title: 'Ошибка',
