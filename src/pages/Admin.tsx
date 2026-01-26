@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 
-const ADMIN_PASSWORD = 'admin123';
+const AUTH_API = 'https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c';
 const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
 const UPLOAD_API = 'https://functions.poehali.dev/79ec0224-ad03-4786-a0d7-bea6e8ce3d08';
 
@@ -31,27 +31,53 @@ export default function Admin() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('admin_auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      loadMedia();
+    const token = sessionStorage.getItem('admin_token');
+    const expiresAt = sessionStorage.getItem('admin_expires');
+    
+    if (token && expiresAt) {
+      const expiry = new Date(expiresAt);
+      if (new Date() < expiry) {
+        setIsAuthenticated(true);
+        loadMedia();
+      } else {
+        sessionStorage.removeItem('admin_token');
+        sessionStorage.removeItem('admin_expires');
+      }
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('admin_auth', 'true');
-      loadMedia();
-      toast({
-        title: 'Вход выполнен',
-        description: 'Добро пожаловать в панель управления',
+    
+    try {
+      const response = await fetch(AUTH_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
       });
-    } else {
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        sessionStorage.setItem('admin_token', data.token);
+        sessionStorage.setItem('admin_expires', data.expires_at);
+        setIsAuthenticated(true);
+        loadMedia();
+        toast({
+          title: 'Вход выполнен',
+          description: 'Добро пожаловать в панель управления',
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: data.error || 'Неверный пароль',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
       toast({
         title: 'Ошибка',
-        description: 'Неверный пароль',
+        description: 'Не удалось выполнить вход',
         variant: 'destructive',
       });
     }
@@ -59,7 +85,8 @@ export default function Admin() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_auth');
+    sessionStorage.removeItem('admin_token');
+    sessionStorage.removeItem('admin_expires');
     navigate('/');
   };
 

@@ -1,4 +1,5 @@
 {
+  "auth": "https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c",
   "cleanup": "https://functions.poehali.dev/9b56b277-d09f-40b7-ad37-c22f6a697aca",
   "videos": "https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07",
   "upload": "https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f"
