@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 const AUTH_API = 'https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c';
 const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
 const UPLOAD_API = 'https://functions.poehali.dev/34876a78-f76d-4862-8d89-f950c302216f';
+const MASTERS_API = 'https://functions.poehali.dev/fff54d0d-ca89-4a7c-b0c6-163121618042';
 
 interface Media {
   id: number;
@@ -23,6 +24,14 @@ interface MediaWithUrl extends Media {
   url: string;
 }
 
+interface Master {
+  id: number;
+  name: string;
+  description: string;
+  photo_url: string | null;
+  display_order: number;
+}
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -33,6 +42,9 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Media>>({});
   const [previewFile, setPreviewFile] = useState<{ url: string; type: string; name: string } | null>(null);
+  const [masters, setMasters] = useState<Master[]>([]);
+  const [editingMasterId, setEditingMasterId] = useState<number | null>(null);
+  const [masterForm, setMasterForm] = useState<Partial<Master>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -45,6 +57,7 @@ export default function Admin() {
       if (new Date() < expiry) {
         setIsAuthenticated(true);
         loadMedia();
+        loadMasters();
       } else {
         sessionStorage.removeItem('admin_token');
         sessionStorage.removeItem('admin_expires');
@@ -94,6 +107,102 @@ export default function Admin() {
     sessionStorage.removeItem('admin_token');
     sessionStorage.removeItem('admin_expires');
     navigate('/');
+  };
+
+  const loadMasters = async () => {
+    try {
+      const response = await fetch(MASTERS_API);
+      const data = await response.json();
+      setMasters(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to load masters:', error);
+    }
+  };
+
+  const startEditMaster = (master: Master) => {
+    setEditingMasterId(master.id);
+    setMasterForm({
+      name: master.name,
+      description: master.description,
+      photo_url: master.photo_url,
+    });
+  };
+
+  const cancelEditMaster = () => {
+    setEditingMasterId(null);
+    setMasterForm({});
+  };
+
+  const saveMaster = async (id: number) => {
+    try {
+      const response = await fetch(MASTERS_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...masterForm }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Сохранено',
+          description: 'Данные мастера обновлены',
+        });
+        setEditingMasterId(null);
+        setMasterForm({});
+        loadMasters();
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось сохранить изменения',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleMasterPhotoUpload = async (masterId: number, file: File) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        
+        const uploadResponse = await fetch(UPLOAD_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            file: base64,
+            type: file.type,
+          }),
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          
+          const updateResponse = await fetch(MASTERS_API, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: masterId,
+              photo_url: uploadData.url,
+            }),
+          });
+
+          if (updateResponse.ok) {
+            toast({
+              title: 'Фото загружено',
+              description: 'Фотография мастера обновлена',
+            });
+            loadMasters();
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить фото',
+        variant: 'destructive',
+      });
+    }
   };
 
   const loadMedia = async () => {
@@ -612,6 +721,86 @@ export default function Admin() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="bg-card rounded-lg border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Наши мастера ({masters.length})</h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {masters.map((master) => (
+                <div key={master.id} className="border rounded-lg overflow-hidden">
+                  <div className="relative aspect-[3/4] bg-muted group">
+                    {master.photo_url ? (
+                      <img src={master.photo_url} alt={master.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        Фото мастера
+                      </div>
+                    )}
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      <Icon name="Upload" size={32} className="text-white" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleMasterPhotoUpload(master.id, file);
+                        }}
+                      />
+                    </label>
+                  </div>
+                  
+                  <div className="p-4 space-y-3">
+                    {editingMasterId === master.id ? (
+                      <>
+                        <input
+                          type="text"
+                          value={masterForm.name || ''}
+                          onChange={(e) => setMasterForm({ ...masterForm, name: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-md"
+                          placeholder="Имя мастера"
+                        />
+                        <textarea
+                          value={masterForm.description || ''}
+                          onChange={(e) => setMasterForm({ ...masterForm, description: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-md min-h-[100px]"
+                          placeholder="Описание"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => saveMaster(master.id)}
+                            className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
+                          >
+                            Сохранить
+                          </button>
+                          <button
+                            onClick={cancelEditMaster}
+                            className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
+                          >
+                            Отмена
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="font-medium text-lg">{master.name}</h3>
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{master.description}</p>
+                        <button
+                          onClick={() => startEditMaster(master)}
+                          className="w-full px-3 py-2 border rounded hover:bg-muted transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Icon name="Pencil" size={16} />
+                          Редактировать
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

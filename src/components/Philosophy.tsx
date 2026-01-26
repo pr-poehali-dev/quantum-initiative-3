@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import { HighlightedText } from "./HighlightedText"
 
+const MASTERS_API = 'https://functions.poehali.dev/fff54d0d-ca89-4a7c-b0c6-163121618042'
+
+interface Master {
+  id: number
+  name: string
+  description: string
+  photo_url: string | null
+  display_order: number
+}
+
 const philosophyItems = [
   {
     title: "Натуральность материала",
@@ -26,8 +36,20 @@ const philosophyItems = [
 export function Philosophy() {
   const [visibleItems, setVisibleItems] = useState<number[]>([])
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [masters, setMasters] = useState<Master[]>([])
 
   useEffect(() => {
+    const loadMasters = async () => {
+      try {
+        const response = await fetch(MASTERS_API)
+        const data = await response.json()
+        setMasters(Array.isArray(data) ? data : [])
+      } catch (error) {
+        console.error('Failed to load masters:', error)
+      }
+    }
+    loadMasters()
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -98,40 +120,36 @@ export function Philosophy() {
             ))}
 
             {/* Masters section */}
-            <div className="mt-24 pt-16 border-t">
-              <h3 className="text-3xl md:text-4xl font-medium mb-12">Наши мастера</h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Master 1 */}
-                <div className="space-y-4">
-                  <div className="aspect-[3/4] overflow-hidden bg-muted">
-                    <img
-                      src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/af88d9f3-26d8-4690-aa7c-e7f92b24d90b.png"
-                      alt="Мастер 1"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-medium mb-2">Имя мастера</h4>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Описание и опыт работы мастера. Здесь вы можете указать специализацию, достижения и философию работы.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Master 2 - placeholder */}
-                <div className="space-y-4">
-                  <div className="aspect-[3/4] overflow-hidden bg-muted flex items-center justify-center">
-                    <p className="text-muted-foreground">Фото мастера</p>
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-medium mb-2">Имя мастера</h4>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Описание и опыт работы мастера. Здесь вы можете указать специализацию, достижения и философию работы.
-                    </p>
-                  </div>
+            {masters.length > 0 && (
+              <div className="mt-24 pt-16 border-t">
+                <h3 className="text-3xl md:text-4xl font-medium mb-12">Наши мастера</h3>
+                <div className="grid md:grid-cols-2 gap-8">
+                  {masters.map((master) => (
+                    <div key={master.id} className="space-y-4">
+                      <div className="aspect-[3/4] overflow-hidden bg-muted">
+                        {master.photo_url ? (
+                          <img
+                            src={master.photo_url}
+                            alt={master.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <p className="text-muted-foreground">Фото мастера</p>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-medium mb-2">{master.name}</h4>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                          {master.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
