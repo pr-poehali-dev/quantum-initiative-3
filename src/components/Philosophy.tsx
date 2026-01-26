@@ -96,6 +96,42 @@ export function Philosophy() {
                 </div>
               </div>
             ))}
+
+            {/* Masters section */}
+            <div className="mt-24 pt-16 border-t">
+              <h3 className="text-3xl md:text-4xl font-medium mb-12">Наши мастера</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Master 1 */}
+                <div className="space-y-4">
+                  <div className="aspect-[3/4] overflow-hidden bg-muted">
+                    <img
+                      src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/af88d9f3-26d8-4690-aa7c-e7f92b24d90b.png"
+                      alt="Мастер 1"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-medium mb-2">Имя мастера</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Описание и опыт работы мастера. Здесь вы можете указать специализацию, достижения и философию работы.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Master 2 - placeholder */}
+                <div className="space-y-4">
+                  <div className="aspect-[3/4] overflow-hidden bg-muted flex items-center justify-center">
+                    <p className="text-muted-foreground">Фото мастера</p>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-medium mb-2">Имя мастера</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Описание и опыт работы мастера. Здесь вы можете указать специализацию, достижения и философию работы.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
