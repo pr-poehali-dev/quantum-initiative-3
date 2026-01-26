@@ -60,7 +60,7 @@ def handler(event: dict, context) -> dict:
         elif 'webm' in file_type:
             ext = 'webm'
         
-        filename = f"projects/{uuid.uuid4()}.{ext}"
+        filename = f"{uuid.uuid4()}.{ext}"
         
         s3.put_object(
             Bucket='files',
