@@ -118,13 +118,21 @@ export function Projects() {
   }
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % projectsList.length)
+    let nextIndex = (currentImageIndex + 1) % projectsList.length
+    while (nextIndex !== currentImageIndex && !projectsList[nextIndex].media) {
+      nextIndex = (nextIndex + 1) % projectsList.length
+    }
+    setCurrentImageIndex(nextIndex)
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + projectsList.length) % projectsList.length)
+    let prevIndex = (currentImageIndex - 1 + projectsList.length) % projectsList.length
+    while (prevIndex !== currentImageIndex && !projectsList[prevIndex].media) {
+      prevIndex = (prevIndex - 1 + projectsList.length) % projectsList.length
+    }
+    setCurrentImageIndex(prevIndex)
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
