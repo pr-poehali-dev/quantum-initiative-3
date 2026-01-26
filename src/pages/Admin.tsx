@@ -27,6 +27,7 @@ export default function Admin() {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Media>>({});
+  const [previewFile, setPreviewFile] = useState<{ url: string; type: string; name: string } | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -107,7 +108,7 @@ export default function Admin() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -120,70 +121,65 @@ export default function Admin() {
       return;
     }
 
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+      setPreviewFile({
+        url: dataUrl,
+        type: mediaType,
+        name: file.name,
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const confirmUpload = async () => {
+    if (!previewFile) return;
+
     setUploading(true);
 
     try {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        try {
-          const dataUrl = event.target?.result as string;
-          const mediaType = file.type.startsWith('video/') ? 'video' : 'image';
+      const addResponse = await fetch(MEDIA_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: previewFile.url,
+          title: '',
+          description: '',
+          media_type: previewFile.type,
+          category: '',
+          location: '',
+          year: '',
+        }),
+      });
 
-          const addResponse = await fetch(MEDIA_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              url: dataUrl,
-              title: '',
-              description: '',
-              media_type: mediaType,
-              category: '',
-              location: '',
-              year: '',
-            }),
-          });
-
-          if (addResponse.ok) {
-            toast({
-              title: 'Файл загружен',
-              description: 'Медиа успешно добавлено в галерею',
-            });
-            loadMedia();
-          } else {
-            const errorData = await addResponse.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Ошибка сохранения в базу');
-          }
-        } catch (error) {
-          console.error('Upload error:', error);
-          toast({
-            title: 'Ошибка загрузки',
-            description: error instanceof Error ? error.message : 'Не удалось загрузить файл',
-            variant: 'destructive',
-          });
-        } finally {
-          setUploading(false);
-        }
-      };
-
-      reader.onerror = () => {
+      if (addResponse.ok) {
         toast({
-          title: 'Ошибка чтения файла',
-          description: 'Не удалось прочитать файл',
-          variant: 'destructive',
+          title: 'Файл загружен',
+          description: 'Медиа успешно добавлено в галерею',
         });
-        setUploading(false);
-      };
-
-      reader.readAsDataURL(file);
+        setPreviewFile(null);
+        loadMedia();
+      } else {
+        const errorData = await addResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Ошибка сохранения в базу');
+      }
     } catch (error) {
-      console.error('File read error:', error);
+      console.error('Upload error:', error);
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось начать загрузку',
+        title: 'Ошибка загрузки',
+        description: error instanceof Error ? error.message : 'Не удалось загрузить файл',
         variant: 'destructive',
       });
+    } finally {
       setUploading(false);
     }
+  };
+
+  const cancelPreview = () => {
+    setPreviewFile(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -306,30 +302,62 @@ export default function Admin() {
 
         <div className="mb-8 p-6 bg-card rounded-lg border">
           <h2 className="text-xl font-semibold mb-4">Загрузить файл</h2>
-          <div className="flex items-center gap-4">
-            <label className="flex-1">
-              <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
-                {uploading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon name="Loader2" className="animate-spin" size={24} />
-                    <span>Загрузка...</span>
-                  </div>
+          
+          {previewFile ? (
+            <div className="space-y-4">
+              <div className="border rounded-lg overflow-hidden bg-muted">
+                {previewFile.type === 'video' ? (
+                  <video src={previewFile.url} className="w-full aspect-[4/3] object-cover" controls />
                 ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <Icon name="Upload" size={24} />
-                    <span>Нажмите для выбора фото или видео (макс. 50 МБ)</span>
-                  </div>
+                  <img src={previewFile.url} className="w-full aspect-[4/3] object-cover" alt="Предпросмотр" />
                 )}
+              </div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={confirmUpload}
+                  disabled={uploading}
+                  className="flex-1 px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {uploading ? (
+                    <>
+                      <Icon name="Loader2" className="animate-spin" size={20} />
+                      <span>Загрузка...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="Check" size={20} />
+                      <span>Загрузить в галерею</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={cancelPreview}
+                  disabled={uploading}
+                  className="px-6 py-3 border rounded-md hover:bg-muted transition-colors disabled:opacity-50"
+                >
+                  Отмена
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground text-center">
+                Проверьте, как выглядит файл. После загрузки добавьте название и описание.
+              </p>
+            </div>
+          ) : (
+            <label>
+              <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
+                <div className="flex items-center justify-center gap-2">
+                  <Icon name="Upload" size={24} />
+                  <span>Нажмите для выбора фото или видео (макс. 5 МБ)</span>
+                </div>
                 <input
                   type="file"
                   accept="image/*,video/*"
-                  onChange={handleFileUpload}
+                  onChange={handleFileSelect}
                   className="hidden"
-                  disabled={uploading}
                 />
               </div>
             </label>
-          </div>
+          )}
         </div>
 
         <div className="space-y-8">
