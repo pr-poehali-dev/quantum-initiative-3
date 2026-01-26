@@ -134,12 +134,12 @@ export default function Admin() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               url: dataUrl,
-              title: file.name,
+              title: '',
               description: '',
               media_type: mediaType,
               category: '',
               location: '',
-              year: new Date().getFullYear().toString(),
+              year: '',
             }),
           });
 

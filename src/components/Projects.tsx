@@ -262,7 +262,7 @@ export function Projects() {
                   {project.mediaType === "video" ? (
                     <video
                       src={project.media}
-                      className={`w-full h-full object-contain transition-transform duration-700 ${
+                      className={`w-full h-full object-cover transition-transform duration-700 ${
                         hoveredId === project.id ? "scale-105" : "scale-100"
                       }`}
                       autoPlay
@@ -274,7 +274,7 @@ export function Projects() {
                     <img
                       src={project.media || "/placeholder.svg"}
                       alt={project.title}
-                      className={`w-full h-full object-contain transition-transform duration-700 ${
+                      className={`w-full h-full object-cover transition-transform duration-700 ${
                         hoveredId === project.id ? "scale-105" : "scale-100"
                       }`}
                     />
