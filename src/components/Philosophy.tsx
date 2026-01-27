@@ -84,9 +84,9 @@ export function Philosophy() {
 
             <div className="relative mt-8 lg:mt-0">
               <img
-                src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/8c7a5c48-2297-46dc-81c4-8b4bf9322664.png"
-                alt="Деревянные сувениры и декор"
-                className="opacity-90 relative z-10 w-full lg:w-auto"
+                src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/11b7dd00-3d28-4bd4-9313-c4fc415dddb9.png"
+                alt="Деревянные изделия на мраморном столе"
+                className="opacity-90 relative z-10 w-full lg:w-auto rounded-lg"
               />
             </div>
           </div>
