@@ -61,11 +61,11 @@ const blogPosts: BlogPost[] = [
 
 export function Blog() {
   const handleReadArticle = (postId: string) => {
-    alert(`Открытие статьи ${postId}. Здесь будет полный текст статьи.`)
+    window.location.href = `/blog/${postId}`
   }
 
   const handleAllArticles = () => {
-    alert('Здесь будет страница со всеми статьями блога.')
+    document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
