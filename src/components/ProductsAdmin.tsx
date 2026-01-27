@@ -228,6 +228,35 @@ export function ProductsAdmin() {
     }
   };
 
+  const handleRemovePhoto = async (productId: number, photoUrl: string) => {
+    if (!confirm('Удалить это фото?')) return;
+
+    try {
+      const response = await fetch(PRODUCTS_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id: productId, 
+          remove_photo: photoUrl 
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Фото удалено',
+          description: 'Фотография успешно удалена',
+        });
+        loadProducts();
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить фото',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-8">Загрузка...</div>;
   }
@@ -388,16 +417,30 @@ export function ProductsAdmin() {
               </div>
             ) : (
               <div className="flex gap-6">
-                <div className="flex gap-2 flex-shrink-0">
+                <div className="flex gap-2 flex-shrink-0 flex-wrap max-w-xs">
                   {product.photos && product.photos.length > 0 ? (
                     product.photos.map((photo, index) => (
-                      <div key={index} className="w-24 h-24 bg-muted rounded-lg overflow-hidden">
+                      <div key={index} className="relative w-24 h-24 bg-muted rounded-lg overflow-hidden group">
                         <img src={photo} alt={`${product.name} - ${index + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          onClick={() => handleRemovePhoto(product.id, photo)}
+                          className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Удалить фото"
+                        >
+                          <Icon name="X" size={14} />
+                        </button>
                       </div>
                     ))
                   ) : product.photo_url ? (
-                    <div className="w-24 h-24 bg-muted rounded-lg overflow-hidden">
+                    <div className="relative w-24 h-24 bg-muted rounded-lg overflow-hidden group">
                       <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => handleRemovePhoto(product.id, product.photo_url!)}
+                        className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Удалить фото"
+                      >
+                        <Icon name="X" size={14} />
+                      </button>
                     </div>
                   ) : (
                     <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">

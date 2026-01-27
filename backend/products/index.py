@@ -125,6 +125,10 @@ def handle_put(conn, event) -> dict:
     if not product_id:
         return {'statusCode': 400, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Product ID is required'})}
     
+    remove_photo = body.get('remove_photo')
+    if remove_photo:
+        return handle_remove_photo(conn, product_id, remove_photo)
+    
     name = body.get('name')
     description = body.get('description')
     price = body.get('price')
@@ -192,6 +196,30 @@ def handle_delete(conn, event) -> dict:
     
     cur = conn.cursor()
     cur.execute('DELETE FROM products WHERE id = %s', (product_id,))
+    conn.commit()
+    cur.close()
+    
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        'body': json.dumps({'success': True})
+    }
+
+
+def handle_remove_photo(conn, product_id: int, photo_url: str) -> dict:
+    '''Удалить конкретное фото из массива photos'''
+    cur = conn.cursor()
+    
+    cur.execute('''
+        UPDATE products 
+        SET photos = (
+            SELECT jsonb_agg(elem)
+            FROM jsonb_array_elements(photos) elem
+            WHERE elem::text != %s
+        )
+        WHERE id = %s
+    ''', (json.dumps(photo_url), product_id))
+    
     conn.commit()
     cur.close()
     
