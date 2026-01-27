@@ -94,9 +94,9 @@ export function Blog() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full"
+              className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full flex flex-col"
             >
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-48 overflow-hidden flex-shrink-0">
                 <img 
                   src={post.image} 
                   alt={post.title}
@@ -107,7 +107,7 @@ export function Blog() {
                 </div>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center gap-4 text-sm text-wood-medium mb-3">
                   <div className="flex items-center gap-1">
                     <Icon name="Calendar" size={16} />
@@ -119,17 +119,22 @@ export function Blog() {
                   </div>
                 </div>
 
-                <h3 className="font-heading text-xl text-wood-dark mb-3 hover:text-wood-accent transition-colors">
+                <h3 className="font-heading text-xl text-wood-dark mb-3 hover:text-wood-accent transition-colors leading-tight">
                   {post.title}
                 </h3>
 
-                <p className="text-wood-medium mb-4 line-clamp-3">
+                <p className="text-wood-medium mb-4 flex-grow" style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
                   {post.excerpt}
                 </p>
 
                 <button 
                   onClick={() => handleReadArticle(post.id)}
-                  className="inline-flex items-center gap-2 text-wood-accent font-medium hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-wood-accent font-medium hover:gap-3 transition-all mt-auto"
                 >
                   Читать статью
                   <Icon name="ArrowRight" size={18} />
