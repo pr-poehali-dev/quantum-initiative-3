@@ -119,15 +119,16 @@ export function Blog() {
                   </div>
                 </div>
 
-                <h3 className="font-heading text-xl text-wood-dark mb-3 hover:text-wood-accent transition-colors leading-tight">
+                <h3 className="font-heading text-xl text-wood-dark mb-3 hover:text-wood-accent transition-colors">
                   {post.title}
                 </h3>
 
-                <p className="text-wood-medium mb-4 flex-grow" style={{
+                <p className="text-wood-medium mb-4 overflow-hidden" style={{
                   display: '-webkit-box',
                   WebkitLineClamp: 3,
                   WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
+                  lineHeight: '1.6',
+                  maxHeight: '4.8em'
                 }}>
                   {post.excerpt}
                 </p>
