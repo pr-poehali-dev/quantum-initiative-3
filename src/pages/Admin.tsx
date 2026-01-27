@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import { ProductsAdmin } from '@/components/ProductsAdmin';
 
 const AUTH_API = 'https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c';
 const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
@@ -772,6 +773,10 @@ export default function Admin() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="mb-8">
+            <ProductsAdmin />
           </div>
 
           <div className="bg-card rounded-lg border p-6">
