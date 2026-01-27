@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import { AddProductForm } from '@/components/products/AddProductForm';
+import { ProductEditForm } from '@/components/products/ProductEditForm';
+import { ProductCard } from '@/components/products/ProductCard';
 
 const PRODUCTS_API = 'https://functions.poehali.dev/e1ea056e-4429-4a26-8b40-0a4a97dd94b1';
 
@@ -274,237 +276,42 @@ export function ProductsAdmin() {
       </div>
 
       {showAddForm && (
-        <div className="bg-card p-6 rounded-lg border space-y-4">
-          <h3 className="text-xl font-bold">Новый товар</h3>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2">Название *</label>
-            <input
-              type="text"
-              value={newProduct.name || ''}
-              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Деревянная шкатулка"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Описание</label>
-            <textarea
-              value={newProduct.description || ''}
-              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-              className="w-full px-4 py-2 border rounded-md"
-              rows={3}
-              placeholder="Краткое описание товара"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Цена (₽)</label>
-            <input
-              type="number"
-              value={newProduct.price || ''}
-              onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) || null })}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="2500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Фото</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handlePhotoUpload(null, file);
-              }}
-              className="w-full"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={newProduct.in_stock || false}
-              onChange={(e) => setNewProduct({ ...newProduct, in_stock: e.target.checked })}
-              id="new-in-stock"
-            />
-            <label htmlFor="new-in-stock" className="text-sm">В наличии</label>
-          </div>
-
-          <button
-            onClick={handleAddProduct}
-            className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Создать товар
-          </button>
-        </div>
+        <AddProductForm
+          newProduct={newProduct}
+          onFormChange={setNewProduct}
+          onPhotoUpload={handlePhotoUpload}
+          onSubmit={handleAddProduct}
+          onCancel={() => setShowAddForm(false)}
+        />
       )}
 
       <div className="grid gap-4">
         {products.map((product) => (
-          <div key={product.id} className="bg-card p-6 rounded-lg border">
+          <div key={product.id}>
             {editingId === product.id ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Название</label>
-                  <input
-                    type="text"
-                    value={editForm.name || ''}
-                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-md"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Описание</label>
-                  <textarea
-                    value={editForm.description || ''}
-                    onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-md"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Цена (₽)</label>
-                  <input
-                    type="number"
-                    value={editForm.price || ''}
-                    onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || null })}
-                    className="w-full px-4 py-2 border rounded-md"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Порядок отображения</label>
-                  <input
-                    type="number"
-                    value={editForm.display_order || 0}
-                    onChange={(e) => setEditForm({ ...editForm, display_order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border rounded-md"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={editForm.in_stock || false}
-                    onChange={(e) => setEditForm({ ...editForm, in_stock: e.target.checked })}
-                    id={`edit-in-stock-${product.id}`}
-                  />
-                  <label htmlFor={`edit-in-stock-${product.id}`} className="text-sm">В наличии</label>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => saveEdit(product.id)}
-                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-                  >
-                    Сохранить
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingId(null);
-                      setEditForm({});
-                    }}
-                    className="px-4 py-2 border rounded-md hover:bg-muted"
-                  >
-                    Отмена
-                  </button>
-                </div>
+              <div className="bg-card p-6 rounded-lg border">
+                <ProductEditForm
+                  productId={product.id}
+                  editForm={editForm}
+                  onFormChange={setEditForm}
+                  onSave={saveEdit}
+                  onCancel={() => {
+                    setEditingId(null);
+                    setEditForm({});
+                  }}
+                />
               </div>
             ) : (
-              <div className="flex gap-6">
-                <div className="flex gap-2 flex-shrink-0 flex-wrap max-w-xs">
-                  {product.photos && product.photos.length > 0 ? (
-                    product.photos.map((photo, index) => (
-                      <div key={index} className="relative w-24 h-24 bg-muted rounded-lg overflow-hidden group">
-                        <img src={photo} alt={`${product.name} - ${index + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          onClick={() => handleRemovePhoto(product.id, photo)}
-                          className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                          title="Удалить фото"
-                        >
-                          <Icon name="X" size={14} />
-                        </button>
-                      </div>
-                    ))
-                  ) : product.photo_url ? (
-                    <div className="relative w-24 h-24 bg-muted rounded-lg overflow-hidden group">
-                      <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover" />
-                      <button
-                        onClick={() => handleRemovePhoto(product.id, product.photo_url!)}
-                        className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Удалить фото"
-                      >
-                        <Icon name="X" size={14} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
-                      <Icon name="Image" size={32} className="text-muted-foreground" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="text-xl font-bold">{product.name}</h3>
-                      {product.description && (
-                        <p className="text-muted-foreground mt-1">{product.description}</p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <label className="cursor-pointer px-3 py-1 border rounded-md hover:bg-muted transition-colors">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handlePhotoUpload(product.id, file);
-                          }}
-                        />
-                        <Icon name="Upload" size={16} className="inline" />
-                      </label>
-                      <button
-                        onClick={() => startEdit(product)}
-                        className="px-3 py-1 border rounded-md hover:bg-muted transition-colors"
-                      >
-                        <Icon name="Edit" size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="px-3 py-1 border border-destructive text-destructive rounded-md hover:bg-destructive hover:text-white transition-colors"
-                      >
-                        <Icon name="Trash2" size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
-                    {product.price !== null && (
-                      <span className="font-medium text-foreground text-lg">{product.price.toLocaleString('ru-RU')} ₽</span>
-                    )}
-                    <span className={product.in_stock ? 'text-green-600' : 'text-red-600'}>
-                      {product.in_stock ? '✓ В наличии' : '✗ Нет в наличии'}
-                    </span>
-                    <span>Порядок: {product.display_order}</span>
-                  </div>
-                </div>
-              </div>
+              <ProductCard
+                product={product}
+                onEdit={startEdit}
+                onDelete={handleDelete}
+                onPhotoUpload={handlePhotoUpload}
+                onRemovePhoto={handleRemovePhoto}
+              />
             )}
           </div>
         ))}
-
-        {products.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            Товаров пока нет. Добавьте первый товар в каталог.
-          </div>
-        )}
       </div>
     </div>
   );
