@@ -34,7 +34,11 @@ export function Header() {
     >
       <nav className="container mx-auto px-6 flex items-center justify-between md:px-[24]">
         <a href="/" className="flex items-center gap-2 group" onClick={scrollToTop}>
-          <span className="text-2xl font-light tracking-wider text-white">ПРОСТРАНСТВО</span>
+          <img 
+            src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/4782bab1-677a-4d7b-b3bb-0e6e186f97f8.png" 
+            alt="Natural Masterpieces" 
+            className="h-12 w-auto transition-transform group-hover:scale-105"
+          />
         </a>
 
         <ul className="hidden md:flex items-center gap-10 text-sm tracking-wide">
@@ -94,8 +98,7 @@ export function Header() {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="md:hidden mt-8 pb-6 animate-in fade-in slide-in-from-top-2 duration-300">
-        <div className="container mx-auto px-6">
+        <div className="md:hidden mt-8 pb-6 animate-in fade-in slide-in-from-top-2 duration-300 container mx-auto px-6">
           <ul className="flex flex-col gap-6 mb-8">
             {[
               { label: "Главная", href: "#hero" },
@@ -135,7 +138,6 @@ export function Header() {
               <span>+7 929 309 08 98</span>
             </a>
           </div>
-        </div>
         </div>
       )}
     </header>

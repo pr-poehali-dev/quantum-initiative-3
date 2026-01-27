@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { HighlightedText } from "./HighlightedText"
+import { ProductCarousel } from "./ProductCarousel"
 
 const PRODUCTS_API = 'https://functions.poehali.dev/e1ea056e-4429-4a26-8b40-0a4a97dd94b1'
 
@@ -9,6 +10,7 @@ interface Product {
   description: string
   price: number | null
   photo_url: string | null
+  photos: string[]
   in_stock: boolean
   display_order: number
   created_at: string | null
@@ -62,17 +64,10 @@ export function Catalog() {
             {products.map((product) => (
               <div key={product.id} className="group">
                 <div className="aspect-[3/4] overflow-hidden bg-background mb-6">
-                  {product.photo_url ? (
-                    <img
-                      src={product.photo_url}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-muted-foreground">Фото товара</p>
-                    </div>
-                  )}
+                  <ProductCarousel 
+                    photos={product.photos && product.photos.length > 0 ? product.photos : product.photo_url ? [product.photo_url] : []} 
+                    productName={product.name}
+                  />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl md:text-2xl font-medium">{product.name}</h3>

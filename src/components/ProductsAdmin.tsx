@@ -10,6 +10,7 @@ interface Product {
   description: string;
   price: number | null;
   photo_url: string | null;
+  photos: string[];
   in_stock: boolean;
   display_order: number;
 }
@@ -387,11 +388,19 @@ export function ProductsAdmin() {
               </div>
             ) : (
               <div className="flex gap-6">
-                <div className="w-32 h-32 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                  {product.photo_url ? (
-                    <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover" />
+                <div className="flex gap-2 flex-shrink-0">
+                  {product.photos && product.photos.length > 0 ? (
+                    product.photos.map((photo, index) => (
+                      <div key={index} className="w-24 h-24 bg-muted rounded-lg overflow-hidden">
+                        <img src={photo} alt={`${product.name} - ${index + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))
+                  ) : product.photo_url ? (
+                    <div className="w-24 h-24 bg-muted rounded-lg overflow-hidden">
+                      <img src={product.photo_url} alt={product.name} className="w-full h-full object-cover" />
+                    </div>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
                       <Icon name="Image" size={32} className="text-muted-foreground" />
                     </div>
                   )}

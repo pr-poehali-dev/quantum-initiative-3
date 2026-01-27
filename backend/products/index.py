@@ -47,7 +47,7 @@ def handle_get(conn, event) -> dict:
     '''Получить список всех товаров'''
     cur = conn.cursor()
     cur.execute('''
-        SELECT id, name, description, price, photo_url, in_stock, display_order, created_at
+        SELECT id, name, description, price, photo_url, photos, in_stock, display_order, created_at
         FROM products
         ORDER BY display_order ASC, created_at DESC
     ''')
@@ -55,15 +55,19 @@ def handle_get(conn, event) -> dict:
     rows = cur.fetchall()
     products = []
     for row in rows:
+        photos = row[5] if row[5] else []
+        if isinstance(photos, str):
+            photos = json.loads(photos)
         products.append({
             'id': row[0],
             'name': row[1],
             'description': row[2],
             'price': float(row[3]) if row[3] else None,
             'photo_url': row[4],
-            'in_stock': row[5],
-            'display_order': row[6],
-            'created_at': row[7].isoformat() if row[7] else None
+            'photos': photos,
+            'in_stock': row[6],
+            'display_order': row[7],
+            'created_at': row[8].isoformat() if row[8] else None
         })
     
     cur.close()
@@ -89,15 +93,18 @@ def handle_post(conn, event) -> dict:
         return {'statusCode': 400, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Name is required'})}
     
     photo_url = None
+    photos = []
     if photo_base64:
         photo_url = upload_photo(photo_base64)
+        if photo_url:
+            photos.append(photo_url)
     
     cur = conn.cursor()
     cur.execute('''
-        INSERT INTO products (name, description, price, photo_url, in_stock, display_order)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO products (name, description, price, photo_url, photos, in_stock, display_order)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING id
-    ''', (name, description, price, photo_url, in_stock, display_order))
+    ''', (name, description, price, photo_url, json.dumps(photos), in_stock, display_order))
     
     product_id = cur.fetchone()[0]
     conn.commit()
@@ -150,6 +157,8 @@ def handle_put(conn, event) -> dict:
     if photo_url:
         updates.append('photo_url = %s')
         params.append(photo_url)
+        updates.append('photos = photos || %s::jsonb')
+        params.append(json.dumps([photo_url]))
     
     if not updates:
         return {'statusCode': 400, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'No fields to update'})}
