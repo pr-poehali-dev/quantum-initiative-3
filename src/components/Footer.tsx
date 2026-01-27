@@ -45,23 +45,18 @@ export function Footer() {
             <h4 className="text-sm font-medium mb-4">Связь</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="mailto:hello@dekora.ru" className="hover:text-foreground transition-colors">
-                  hello@dekora.ru
+                <a href="mailto:KAV089824@MAIL.RU" className="hover:text-foreground transition-colors">
+                  KAV089824@MAIL.RU
                 </a>
               </li>
               <li>
-                <a href="tel:+74951234567" className="hover:text-foreground transition-colors">
-                  +7 (495) 123-45-67
+                <a href="tel:+79293090898" className="hover:text-foreground transition-colors">
+                  +7 929 309-08-98
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition-colors">
-                  Телеграм
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-foreground transition-colors">
-                  ВКонтакте
+                <a href="https://t.me/ANDERSONKOV" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                  Телеграм @ANDERSONKOV
                 </a>
               </li>
             </ul>
