@@ -101,7 +101,7 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-primary/95 backdrop-blur-md">
           <div className="container mx-auto px-6 py-6">
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col gap-4 mb-6">
               {[
                 { label: "Главная", href: "#hero" },
                 { label: "Философия", href: "#about" },
@@ -119,6 +119,27 @@ export function Header() {
                 </li>
               ))}
             </ul>
+
+            <div className="flex items-center gap-6 pt-4 border-t border-white/10">
+              <a
+                href="https://t.me/AndersonKov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-white hover:text-[rgb(251,146,60)] transition-colors duration-300"
+                onClick={closeMobileMenu}
+              >
+                <Icon name="Send" size={20} />
+                <span>Telegram</span>
+              </a>
+              <a
+                href="tel:+79293090898"
+                className="flex items-center gap-2 text-white hover:text-[rgb(251,146,60)] transition-colors duration-300"
+                onClick={closeMobileMenu}
+              >
+                <Icon name="Phone" size={20} />
+                <span>Позвонить</span>
+              </a>
+            </div>
           </div>
         </div>
       )}
