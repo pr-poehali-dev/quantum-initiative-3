@@ -34,7 +34,7 @@ export function Header() {
     >
       <nav className="container mx-auto px-6 flex items-center justify-between md:px-[24]">
         <a href="/" className="flex items-center gap-2 group" onClick={scrollToTop}>
-          <img src="/images/hously-logo.svg" alt="Пространство" width={120} height={32} className="w-auto h-6" />
+          <span className="text-2xl font-light tracking-wider text-white">ПРОСТРАНСТВО</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-10 text-sm tracking-wide">
@@ -93,12 +93,8 @@ export function Header() {
         </button>
       </nav>
 
-      <div
-        className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          mobileMenuOpen ? "max-h-[600px] opacity-100 mt-8" : "max-h-0 opacity-0",
-        )}
-      >
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-8 pb-6 animate-in fade-in slide-in-from-top-2 duration-300">
         <div className="container mx-auto px-6">
           <ul className="flex flex-col gap-6 mb-8">
             {[
@@ -140,7 +136,8 @@ export function Header() {
             </a>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </header>
   )
 }
