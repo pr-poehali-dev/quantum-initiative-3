@@ -109,7 +109,7 @@ export function Blog() {
                 <img 
                   src={post.image} 
                   alt={post.title}
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-wood-dark text-white px-3 py-1 rounded-full text-sm">
                   {post.category}
