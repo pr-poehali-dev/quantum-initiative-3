@@ -68,7 +68,7 @@ const blogPostsData: Record<string, BlogPostData> = {
     title: "5 причин выбрать деревянные сувениры вместо фабричных подарков",
     date: "12 января 2026",
     readTime: "5 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/cd53b59c-7e6b-4d91-81ef-3b764f8cfbf1.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d0657f6e-a3a0-471c-a762-b496ee14a018.jpeg",
     category: "Подарки",
     author: "Консультант по подаркам",
     content: [
@@ -85,7 +85,7 @@ const blogPostsData: Record<string, BlogPostData> = {
     title: "От дерева до шедевра: процесс создания изделия из капа",
     date: "8 января 2026",
     readTime: "7 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/cd53b59c-7e6b-4d91-81ef-3b764f8cfbf1.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d0657f6e-a3a0-471c-a762-b496ee14a018.jpeg",
     category: "Процесс",
     author: "Мастер-резчик",
     content: [

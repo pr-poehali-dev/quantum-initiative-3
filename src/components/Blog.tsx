@@ -45,7 +45,7 @@ const blogPosts: BlogPost[] = [
     excerpt: "Уникальность, экологичность, энергетика натурального дерева. Почему hand-made подарки из капа ценятся выше массового производства и как выбрать идеальный сувенир.",
     date: "12 января 2026",
     readTime: "5 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/cd53b59c-7e6b-4d91-81ef-3b764f8cfbf1.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d0657f6e-a3a0-471c-a762-b496ee14a018.jpeg",
     category: "Подарки"
   },
   {
@@ -54,7 +54,7 @@ const blogPosts: BlogPost[] = [
     excerpt: "За каждым изделием — месяцы сушки, часы шлифовки и годы мастерства. Рассказываем обо всех этапах превращения сырого нароста в произведение искусства.",
     date: "8 января 2026",
     readTime: "7 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/cd53b59c-7e6b-4d91-81ef-3b764f8cfbf1.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d0657f6e-a3a0-471c-a762-b496ee14a018.jpeg",
     category: "Процесс"
   },
   {
