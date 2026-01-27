@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { ProductsAdmin } from '@/components/ProductsAdmin';
+import { LoginForm } from '@/components/admin/LoginForm';
+import { FileUploader } from '@/components/admin/FileUploader';
+import { MediaGallery } from '@/components/admin/MediaGallery';
+import { MastersManager } from '@/components/admin/MastersManager';
 
 const AUTH_API = 'https://functions.poehali.dev/f56c2e7f-63c4-483a-a94d-9ea7c0a4ee6c';
 const MEDIA_API = 'https://functions.poehali.dev/bf44cf81-0850-473e-92c5-6da7b70c3c07';
@@ -19,10 +22,6 @@ interface Media {
   location: string;
   year: string;
   created_at: string;
-}
-
-interface MediaWithUrl extends Media {
-  url: string;
 }
 
 interface Master {
@@ -83,6 +82,7 @@ export default function Admin() {
         sessionStorage.setItem('admin_expires', data.expires_at);
         setIsAuthenticated(true);
         loadMedia();
+        loadMasters();
         toast({
           title: 'Вход выполнен',
           description: 'Добро пожаловать в панель управления',
@@ -210,7 +210,6 @@ export default function Admin() {
       const items = data.items || (Array.isArray(data) ? data : []);
       setMediaList(items);
       
-      // Загрузить url для каждого медиа
       items.forEach(async (media: Media) => {
         loadMediaUrl(media.id);
       });
@@ -325,7 +324,6 @@ export default function Admin() {
     setUploading(true);
 
     try {
-      // Шаг 1: Загрузить файл в S3
       const uploadResponse = await fetch(UPLOAD_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -342,7 +340,6 @@ export default function Admin() {
       const uploadData = await uploadResponse.json();
       const fileUrl = uploadData.url;
 
-      // Шаг 2: Сохранить URL в базу
       const addResponse = await fetch(MEDIA_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -452,34 +449,13 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-card p-8 rounded-lg shadow-lg border">
-          <h1 className="text-2xl font-bold mb-6 text-center">Вход в админ-панель</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Пароль</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Введите пароль"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors"
-            >
-              Войти
-            </button>
-          </form>
-        </div>
-      </div>
+      <LoginForm
+        password={password}
+        setPassword={setPassword}
+        onSubmit={handleLogin}
+      />
     );
   }
-
-  const images = mediaList.filter(m => m.media_type === 'image');
-  const videos = mediaList.filter(m => m.media_type === 'video');
 
   return (
     <div className="min-h-screen bg-background">
@@ -502,362 +478,43 @@ export default function Admin() {
           </div>
         </div>
 
-        <div className="mb-8 p-6 bg-card rounded-lg border">
-          <h2 className="text-xl font-semibold mb-4">Загрузить файл</h2>
-          
-          {previewFile ? (
-            <div className="space-y-4">
-              <div className="border rounded-lg overflow-hidden bg-muted">
-                {previewFile.type === 'video' ? (
-                  <video src={previewFile.url} className="w-full aspect-[4/3] object-contain" controls />
-                ) : (
-                  <img src={previewFile.url} className="w-full aspect-[4/3] object-contain" alt="Предпросмотр" />
-                )}
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={confirmUpload}
-                  disabled={uploading}
-                  className="flex-1 px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {uploading ? (
-                    <>
-                      <Icon name="Loader2" className="animate-spin" size={20} />
-                      <span>Загрузка...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="Check" size={20} />
-                      <span>Загрузить в галерею</span>
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={cancelPreview}
-                  disabled={uploading}
-                  className="px-6 py-3 border rounded-md hover:bg-muted transition-colors disabled:opacity-50"
-                >
-                  Отмена
-                </button>
-              </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Проверьте, как выглядит файл. После загрузки добавьте название и описание.
-              </p>
-            </div>
-          ) : (
-            <label>
-              <div className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
-                <div className="flex items-center justify-center gap-2">
-                  <Icon name="Upload" size={24} />
-                  <span>Нажмите для выбора фото или видео (макс. 5 МБ)</span>
-                </div>
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-              </div>
-            </label>
-          )}
+        <FileUploader
+          previewFile={previewFile}
+          uploading={uploading}
+          onFileSelect={handleFileSelect}
+          onConfirmUpload={confirmUpload}
+          onCancelPreview={cancelPreview}
+        />
+
+        <MediaGallery
+          mediaList={mediaList}
+          mediaUrls={mediaUrls}
+          loading={loading}
+          editingId={editingId}
+          editForm={editForm}
+          onRefresh={loadMedia}
+          onEdit={startEdit}
+          onCancelEdit={cancelEdit}
+          onSaveEdit={saveEdit}
+          onDelete={handleDelete}
+          onEditFormChange={setEditForm}
+        />
+
+        <div className="mt-8">
+          <MastersManager
+            masters={masters}
+            editingMasterId={editingMasterId}
+            masterForm={masterForm}
+            onEdit={startEditMaster}
+            onCancelEdit={cancelEditMaster}
+            onSave={saveMaster}
+            onPhotoUpload={handleMasterPhotoUpload}
+            onFormChange={setMasterForm}
+          />
         </div>
 
-        <div className="space-y-8">
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Фотографии ({images.length})</h2>
-              <button
-                onClick={loadMedia}
-                className="px-4 py-2 border rounded-md hover:bg-muted transition-colors flex items-center gap-2"
-                disabled={loading}
-              >
-                <Icon name={loading ? 'Loader2' : 'RefreshCw'} className={loading ? 'animate-spin' : ''} size={18} />
-                Обновить
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Icon name="Loader2" className="animate-spin" size={32} />
-              </div>
-            ) : images.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Icon name="Image" size={48} className="mx-auto mb-4 opacity-50" />
-                <p>Нет загруженных фотографий</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {images.map((media) => (
-                  <div key={media.id} className="border rounded-lg overflow-hidden">
-                    {mediaUrls[media.id] ? (
-                      <img src={mediaUrls[media.id]} className="w-full aspect-[4/3] object-contain bg-gray-100" alt={media.title} />
-                    ) : (
-                      <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
-                        <Icon name="Loader2" className="animate-spin" size={32} />
-                      </div>
-                    )}
-                    <div className="p-4 space-y-3">
-                      {editingId === media.id ? (
-                        <>
-                          <input
-                            type="text"
-                            value={editForm.title || ''}
-                            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Название"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.category || ''}
-                            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Категория"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.location || ''}
-                            onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Описание"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.year || ''}
-                            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Год"
-                          />
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => saveEdit(media.id)}
-                              className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-                            >
-                              Сохранить
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
-                            >
-                              Отмена
-                            </button>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <h3 className="font-medium">{media.title}</h3>
-                          <p className="text-sm text-muted-foreground">{media.category}</p>
-                          <p className="text-sm text-muted-foreground">{media.location}</p>
-                          <div className="flex items-center justify-between pt-2">
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(media.created_at).toLocaleDateString('ru-RU')}
-                            </span>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => startEdit(media)}
-                                className="px-3 py-1 border rounded hover:bg-muted transition-colors flex items-center gap-1"
-                              >
-                                <Icon name="Pencil" size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(media.id)}
-                                className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
-                              >
-                                <Icon name="Trash2" size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Видео ({videos.length})</h2>
-            </div>
-
-            {videos.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Icon name="Video" size={48} className="mx-auto mb-4 opacity-50" />
-                <p>Нет загруженных видео</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {videos.map((media) => (
-                  <div key={media.id} className="border rounded-lg overflow-hidden">
-                    {mediaUrls[media.id] ? (
-                      <video src={mediaUrls[media.id]} className="w-full aspect-[4/3] object-contain bg-gray-100" controls />
-                    ) : (
-                      <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
-                        <Icon name="Loader2" className="animate-spin" size={32} />
-                      </div>
-                    )}
-                    <div className="p-4 space-y-3">
-                      {editingId === media.id ? (
-                        <>
-                          <input
-                            type="text"
-                            value={editForm.title || ''}
-                            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Название"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.category || ''}
-                            onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Категория"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.location || ''}
-                            onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Описание"
-                          />
-                          <input
-                            type="text"
-                            value={editForm.year || ''}
-                            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
-                            className="w-full px-3 py-2 border rounded-md"
-                            placeholder="Год"
-                          />
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => saveEdit(media.id)}
-                              className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-                            >
-                              Сохранить
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
-                            >
-                              Отмена
-                            </button>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <h3 className="font-medium">{media.title}</h3>
-                          <p className="text-sm text-muted-foreground">{media.category}</p>
-                          <p className="text-sm text-muted-foreground">{media.location}</p>
-                          <div className="flex items-center justify-between pt-2">
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(media.created_at).toLocaleDateString('ru-RU')}
-                            </span>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => startEdit(media)}
-                                className="px-3 py-1 border rounded hover:bg-muted transition-colors flex items-center gap-1"
-                              >
-                                <Icon name="Pencil" size={16} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(media.id)}
-                                className="px-3 py-1 bg-destructive text-white rounded hover:bg-destructive/90 transition-colors flex items-center gap-1"
-                              >
-                                <Icon name="Trash2" size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="mb-8">
-            <ProductsAdmin />
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Наши мастера ({masters.length})</h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {masters.map((master) => (
-                <div key={master.id} className="border rounded-lg overflow-hidden">
-                  <div className="relative aspect-[3/4] bg-muted group">
-                    {master.photo_url ? (
-                      <img src={master.photo_url} alt={master.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                        Фото мастера
-                      </div>
-                    )}
-                    <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                      <Icon name="Upload" size={32} className="text-white" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleMasterPhotoUpload(master.id, file);
-                        }}
-                      />
-                    </label>
-                  </div>
-                  
-                  <div className="p-4 space-y-3">
-                    {editingMasterId === master.id ? (
-                      <>
-                        <input
-                          type="text"
-                          value={masterForm.name || ''}
-                          onChange={(e) => setMasterForm({ ...masterForm, name: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-md"
-                          placeholder="Имя мастера"
-                        />
-                        <textarea
-                          value={masterForm.description || ''}
-                          onChange={(e) => setMasterForm({ ...masterForm, description: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-md min-h-[100px]"
-                          placeholder="Описание"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => saveMaster(master.id)}
-                            className="flex-1 px-3 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-colors"
-                          >
-                            Сохранить
-                          </button>
-                          <button
-                            onClick={cancelEditMaster}
-                            className="flex-1 px-3 py-2 border rounded hover:bg-muted transition-colors"
-                          >
-                            Отмена
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <h3 className="font-medium text-lg">{master.name}</h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{master.description}</p>
-                        <button
-                          onClick={() => startEditMaster(master)}
-                          className="w-full px-3 py-2 border rounded hover:bg-muted transition-colors flex items-center justify-center gap-2"
-                        >
-                          <Icon name="Pencil" size={16} />
-                          Редактировать
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mt-8">
+          <ProductsAdmin />
         </div>
       </div>
     </div>
