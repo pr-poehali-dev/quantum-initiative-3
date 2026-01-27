@@ -5,6 +5,7 @@ import { Catalog } from "../components/Catalog"
 import { Projects } from "../components/Projects"
 import { CallToAction } from "../components/CallToAction"
 import { Footer } from "../components/Footer"
+import { ShareButton } from "../components/ShareButton"
 
 export default function Index() {
   return (
@@ -16,6 +17,7 @@ export default function Index() {
       <Projects />
       <CallToAction />
       <Footer />
+      <ShareButton />
     </main>
   )
 }
