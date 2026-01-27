@@ -35,9 +35,9 @@ export function Header() {
       <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2 group" onClick={scrollToTop}>
           <img 
-            src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/4782bab1-677a-4d7b-b3bb-0e6e186f97f8.png" 
+            src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/9f79e38c-7906-48ed-bc3f-8d89d21c19af.png" 
             alt="Natural Masterpieces" 
-            className="h-12 w-auto transition-transform group-hover:scale-105"
+            className="h-14 w-auto transition-transform group-hover:scale-105"
           />
         </a>
 
