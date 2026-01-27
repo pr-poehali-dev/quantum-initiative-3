@@ -56,6 +56,15 @@ const blogPosts: BlogPost[] = [
     readTime: "7 мин",
     image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/cd53b59c-7e6b-4d91-81ef-3b764f8cfbf1.png",
     category: "Процесс"
+  },
+  {
+    id: "6",
+    title: "Береза карельская: редкий узор природы в ваших руках",
+    excerpt: "Карельская береза встречается лишь в одном регионе мира. Её мраморная текстура веками украшала дворцы и музеи. Почему этот материал стал символом роскоши.",
+    date: "5 января 2026",
+    readTime: "5 мин",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/11b7dd00-3d28-4bd4-9313-c4fc415dddb9.png",
+    category: "Материалы"
   }
 ]
 
