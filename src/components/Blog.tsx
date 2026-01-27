@@ -60,6 +60,14 @@ const blogPosts: BlogPost[] = [
 ]
 
 export function Blog() {
+  const handleReadArticle = (postId: string) => {
+    alert(`Открытие статьи ${postId}. Здесь будет полный текст статьи.`)
+  }
+
+  const handleAllArticles = () => {
+    alert('Здесь будет страница со всеми статьями блога.')
+  }
+
   return (
     <section id="blog" className="py-20 bg-wood-light">
       <div className="container mx-auto px-4">
@@ -119,7 +127,10 @@ export function Blog() {
                   {post.excerpt}
                 </p>
 
-                <button className="inline-flex items-center gap-2 text-wood-accent font-medium hover:gap-3 transition-all">
+                <button 
+                  onClick={() => handleReadArticle(post.id)}
+                  className="inline-flex items-center gap-2 text-wood-accent font-medium hover:gap-3 transition-all"
+                >
                   Читать статью
                   <Icon name="ArrowRight" size={18} />
                 </button>
@@ -135,7 +146,10 @@ export function Blog() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <button className="bg-wood-accent text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-all inline-flex items-center gap-2">
+          <button 
+            onClick={handleAllArticles}
+            className="bg-wood-accent text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-all inline-flex items-center gap-2"
+          >
             Все статьи блога
             <Icon name="BookOpen" size={20} />
           </button>
