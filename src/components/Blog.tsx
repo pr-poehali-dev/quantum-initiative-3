@@ -86,7 +86,7 @@ export function Blog() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-stretch">
           {blogPosts.map((post, index) => (
             <motion.article
               key={post.id}
@@ -94,7 +94,7 @@ export function Blog() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
+              className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 w-full"
             >
               <div className="relative h-48 overflow-hidden">
                 <img 
