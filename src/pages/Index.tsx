@@ -13,7 +13,14 @@ export default function Index() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state?.scrollToBlog) {
+    const savedPosition = sessionStorage.getItem('blogScrollPosition');
+    
+    if (savedPosition) {
+      sessionStorage.removeItem('blogScrollPosition');
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedPosition));
+      }, 100);
+    } else if (location.state?.scrollToBlog) {
       setTimeout(() => {
         const blogElement = document.getElementById('blog');
         if (blogElement) {
