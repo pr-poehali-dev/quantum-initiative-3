@@ -14,9 +14,10 @@ export default function Index() {
       setTimeout(() => {
         const blogElement = document.getElementById('blog');
         if (blogElement) {
-          blogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const offset = blogElement.offsetTop - 80;
+          window.scrollTo({ top: offset, behavior: 'auto' });
         }
-      }, 300);
+      }, 500);
     }
   }, []);
 
