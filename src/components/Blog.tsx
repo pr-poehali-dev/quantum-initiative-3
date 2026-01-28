@@ -63,7 +63,7 @@ const blogPosts: BlogPost[] = [
     excerpt: "Карельская береза встречается лишь в одном регионе мира. Её мраморная текстура веками украшала дворцы и музеи. Почему этот материал стал символом роскоши.",
     date: "5 января 2026",
     readTime: "5 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/11b7dd00-3d28-4bd4-9313-c4fc415dddb9.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/59d4a96a-b406-4530-b7ea-bea4ba3e02c6.png",
     category: "Материалы"
   }
 ]
