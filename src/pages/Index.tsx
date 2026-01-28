@@ -11,13 +11,19 @@ import { ShareButton } from "../components/ShareButton"
 export default function Index() {
   useEffect(() => {
     if (window.location.hash === '#blog') {
-      setTimeout(() => {
+      const scrollToBlog = () => {
         const blogElement = document.getElementById('blog');
         if (blogElement) {
           const offset = blogElement.offsetTop - 80;
           window.scrollTo({ top: offset, behavior: 'auto' });
         }
-      }, 500);
+      };
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(scrollToBlog, 100);
+        });
+      });
     }
   }, []);
 
