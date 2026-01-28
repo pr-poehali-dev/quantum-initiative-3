@@ -17,9 +17,19 @@ export default function Index() {
     
     if (savedPosition) {
       sessionStorage.removeItem('blogScrollPosition');
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedPosition));
-      }, 100);
+      
+      window.history.scrollRestoration = 'manual';
+      
+      const scrollToPosition = () => {
+        window.scrollTo({ top: parseInt(savedPosition), behavior: 'auto' });
+      };
+      
+      requestAnimationFrame(() => {
+        setTimeout(scrollToPosition, 0);
+        setTimeout(scrollToPosition, 50);
+        setTimeout(scrollToPosition, 150);
+        setTimeout(scrollToPosition, 300);
+      });
     } else if (location.state?.scrollToBlog) {
       setTimeout(() => {
         const blogElement = document.getElementById('blog');
