@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom"
 import { Header } from "../components/Header"
 import { Hero } from "../components/Hero"
 import { Philosophy } from "../components/Philosophy"
+import { Process } from "../components/Process"
 import { Catalog } from "../components/Catalog"
 import { Projects } from "../components/Projects"
 import { Blog } from "../components/Blog"
@@ -45,6 +46,7 @@ export default function Index() {
       <Header />
       <Hero />
       <Philosophy />
+      <Process />
       <Catalog />
       <Projects />
       <Blog />
