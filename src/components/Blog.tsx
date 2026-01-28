@@ -70,12 +70,11 @@ const blogPosts: BlogPost[] = [
 
 export function Blog() {
   const handleReadArticle = (postId: string) => {
-    sessionStorage.setItem('blogScrollPosition', window.scrollY.toString());
     window.location.href = `/blog/${postId}`;
   }
 
   const handleAllArticles = () => {
-    document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' })
+    window.location.href = '/blog';
   }
 
   return (
