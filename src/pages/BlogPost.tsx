@@ -130,7 +130,9 @@ export default function BlogPost() {
         <div className="text-center">
           <h1 className="text-4xl font-heading text-wood-dark mb-4">Статья не найдена</h1>
           <button
-            onClick={() => navigate('/#blog')}
+            onClick={() => {
+              window.location.href = '/#blog';
+            }}
             className="text-wood-accent hover:underline"
           >
             Вернуться к блогу
@@ -183,10 +185,7 @@ export default function BlogPost() {
         <div className="container mx-auto max-w-4xl px-4 py-12">
           <button
             onClick={() => {
-              navigate('/');
-              setTimeout(() => {
-                document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
+              window.location.href = '/#blog';
             }}
             className="inline-flex items-center gap-2 text-wood-accent hover:gap-3 transition-all mb-8"
           >
