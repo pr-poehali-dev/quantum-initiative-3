@@ -19,7 +19,7 @@ const blogPostsData: Record<string, BlogPostData> = {
     title: "Что такое кап берёзы и почему он так ценится",
     date: "20 января 2026",
     readTime: "5 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/11b7dd00-3d28-4bd4-9313-c4fc415dddb9.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/f2dc3c8d-8508-46a5-827d-3274f28224fd.jpg",
     category: "Материалы",
     author: "Мастер по дереву",
     content: [
