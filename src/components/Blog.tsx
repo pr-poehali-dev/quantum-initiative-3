@@ -27,7 +27,7 @@ const blogPosts: BlogPost[] = [
     excerpt: "Сувель обладает особой переливающейся структурой, напоминающей мрамор. Рассказываем о секретах работы с этим редким материалом и его преимуществах.",
     date: "18 января 2026",
     readTime: "6 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/11b7dd00-3d28-4bd4-9313-c4fc415dddb9.png",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/98ab2bee-325d-43c8-86a4-e52d1ce4d2d2.jpg",
     category: "Материалы"
   },
   {
