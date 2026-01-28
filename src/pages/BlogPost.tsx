@@ -19,7 +19,7 @@ const blogPostsData: Record<string, BlogPostData> = {
     title: "Что такое кап берёзы и почему он так ценится",
     date: "20 января 2026",
     readTime: "5 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/f2dc3c8d-8508-46a5-827d-3274f28224fd.jpg",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/2003926a-9ba3-4879-967f-878df48467c3.jpeg",
     category: "Материалы",
     author: "Мастер по дереву",
     content: [
@@ -85,7 +85,7 @@ const blogPostsData: Record<string, BlogPostData> = {
     title: "От дерева до шедевра: процесс создания изделия из капа",
     date: "8 января 2026",
     readTime: "7 мин",
-    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d0657f6e-a3a0-471c-a762-b496ee14a018.jpeg",
+    image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/f2dc3c8d-8508-46a5-827d-3274f28224fd.jpg",
     category: "Процесс",
     author: "Мастер-резчик",
     content: [
