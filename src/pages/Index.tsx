@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { Header } from "../components/Header"
 import { Hero } from "../components/Hero"
 import { Philosophy } from "../components/Philosophy"
@@ -9,27 +10,18 @@ import { Footer } from "../components/Footer"
 import { ShareButton } from "../components/ShareButton"
 
 export default function Index() {
+  const location = useLocation();
+
   useEffect(() => {
-    if (window.location.hash === '#blog') {
-      const scrollToBlog = () => {
+    if (location.state?.scrollToBlog) {
+      setTimeout(() => {
         const blogElement = document.getElementById('blog');
         if (blogElement) {
-          const offset = blogElement.offsetTop - 80;
-          window.scrollTo(0, offset);
-          
-          setTimeout(() => {
-            window.scrollTo(0, offset);
-          }, 100);
-          
-          setTimeout(() => {
-            window.scrollTo(0, offset);
-          }, 300);
+          blogElement.scrollIntoView({ block: 'start' });
         }
-      };
-
-      setTimeout(scrollToBlog, 200);
+      }, 100);
     }
-  }, []);
+  }, [location]);
 
   return (
     <main className="min-h-screen">

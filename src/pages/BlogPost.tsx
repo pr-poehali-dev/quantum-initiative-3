@@ -130,7 +130,7 @@ export default function BlogPost() {
         <div className="text-center">
           <h1 className="text-4xl font-heading text-wood-dark mb-4">Статья не найдена</h1>
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/', { state: { scrollToBlog: true }, replace: true })}
             className="text-wood-accent hover:underline"
           >
             Вернуться к блогу
@@ -182,7 +182,7 @@ export default function BlogPost() {
 
         <div className="container mx-auto max-w-4xl px-4 py-12">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/', { state: { scrollToBlog: true }, replace: true })}
             className="inline-flex items-center gap-2 text-wood-accent hover:gap-3 transition-all mb-8"
           >
             <Icon name="ArrowLeft" size={20} />
