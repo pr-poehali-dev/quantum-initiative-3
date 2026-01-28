@@ -12,8 +12,11 @@ export default function Index() {
   useEffect(() => {
     if (window.location.hash === '#blog') {
       setTimeout(() => {
-        document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+        const blogElement = document.getElementById('blog');
+        if (blogElement) {
+          blogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
     }
   }, []);
 
