@@ -55,6 +55,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <a href="tel:+79233708882" className="hover:text-foreground transition-colors">
+                  +7 923 370-88-82
+                </a>
+              </li>
+              <li>
                 <a href="https://t.me/ANDERSONKOV" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                   Телеграм @ANDERSONKOV
                 </a>
