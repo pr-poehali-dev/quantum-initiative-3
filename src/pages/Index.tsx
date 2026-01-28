@@ -15,15 +15,19 @@ export default function Index() {
         const blogElement = document.getElementById('blog');
         if (blogElement) {
           const offset = blogElement.offsetTop - 80;
-          window.scrollTo({ top: offset, behavior: 'auto' });
+          window.scrollTo(0, offset);
+          
+          setTimeout(() => {
+            window.scrollTo(0, offset);
+          }, 100);
+          
+          setTimeout(() => {
+            window.scrollTo(0, offset);
+          }, 300);
         }
       };
 
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setTimeout(scrollToBlog, 100);
-        });
-      });
+      setTimeout(scrollToBlog, 200);
     }
   }, []);
 
