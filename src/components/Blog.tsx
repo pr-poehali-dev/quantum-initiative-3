@@ -88,7 +88,7 @@ export function Blog() {
           className="text-center mb-16"
         >
           <h2 className="font-heading text-4xl md:text-5xl text-wood-dark mb-4">
-            Блог о деревянных изделиях
+            Блог об изделиях из дерева
           </h2>
           <p className="text-lg text-wood-medium max-w-2xl mx-auto">
             Полезные статьи о капе, сувели и секретах работы с натуральным деревом
