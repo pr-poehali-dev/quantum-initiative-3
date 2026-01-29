@@ -26,13 +26,13 @@ export function ProductEditForm({
   return (
     <div className="space-y-4">
       {editForm.photos && editForm.photos.length > 0 && (
-        <div className="flex gap-2 flex-wrap mb-4">
+        <div className="flex gap-3 flex-wrap mb-4">
           {editForm.photos.map((photo, index) => (
             <img
               key={index}
               src={photo}
               alt={`Фото ${index + 1}`}
-              className="w-32 h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity border-2 border-primary"
+              className="w-48 h-48 object-cover rounded-lg cursor-pointer hover:ring-4 hover:ring-primary/50 transition-all border-2 border-border"
               onClick={() => onImageClick?.(photo)}
               title="Нажмите, чтобы увеличить"
             />
