@@ -136,7 +136,10 @@ export function ProductsAdmin() {
       return;
     }
 
+    if (loading) return;
+
     try {
+      setLoading(true);
       const response = await fetch(PRODUCTS_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -156,7 +159,7 @@ export function ProductsAdmin() {
           display_order: 0,
         });
         setShowAddForm(false);
-        loadProducts();
+        await loadProducts();
       }
     } catch (error) {
       toast({
@@ -164,6 +167,8 @@ export function ProductsAdmin() {
         description: 'Не удалось добавить товар',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
