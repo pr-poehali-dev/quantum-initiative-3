@@ -274,18 +274,43 @@ export function ProductsAdmin() {
 
     setLoading(true);
 
+    const ANALYZE_API = 'https://functions.poehali.dev/7918d785-0ea8-41df-8a9f-f3a14a220c2b';
+
     for (const file of fileArray) {
       try {
         const compressedDataUrl = await compressImage(file);
-        const fileName = file.name.replace(/\.[^/.]+$/, '');
+        
+        // Анализируем фото через ИИ
+        let price = null;
+        let description = '';
+        
+        try {
+          const analyzeResponse = await fetch(ANALYZE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: compressedDataUrl }),
+          });
+          
+          if (analyzeResponse.ok) {
+            const aiData = await analyzeResponse.json();
+            price = aiData.price;
+            
+            const descParts = [];
+            if (aiData.material) descParts.push(`Материал: ${aiData.material}`);
+            if (aiData.size) descParts.push(`Размер: ${aiData.size}`);
+            description = descParts.join(', ');
+          }
+        } catch (aiError) {
+          console.log('AI analysis failed, using defaults', aiError);
+        }
         
         const response = await fetch(PRODUCTS_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: fileName,
-            description: '',
-            price: null,
+            name: 'Ваза',
+            description,
+            price,
             in_stock: true,
             display_order: 0,
             photo_base64: compressedDataUrl,

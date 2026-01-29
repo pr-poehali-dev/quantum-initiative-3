@@ -1,0 +1,25 @@
+{
+  "tests": [
+    {
+      "name": "Анализ фото с ценой и материалом",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "price": "number|null",
+        "material": "string|null",
+        "size": "string|null"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "OPTIONS для CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}
