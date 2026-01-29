@@ -4,7 +4,7 @@ import Icon from "./ui/icon"
 
 export function ShareButton() {
   const [showQR, setShowQR] = useState(false)
-  const currentUrl = window.location.href
+  const currentUrl = "https://suvelewood.online"
 
   return (
     <>
