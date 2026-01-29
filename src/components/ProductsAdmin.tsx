@@ -30,6 +30,7 @@ export function ProductsAdmin() {
     display_order: 0,
   });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -206,6 +207,7 @@ export function ProductsAdmin() {
       price: product.price,
       in_stock: product.in_stock,
       display_order: product.display_order,
+      photos: product.photos || [],
     });
   };
 
@@ -274,43 +276,17 @@ export function ProductsAdmin() {
 
     setLoading(true);
 
-    const ANALYZE_API = 'https://functions.poehali.dev/7918d785-0ea8-41df-8a9f-f3a14a220c2b';
-
     for (const file of fileArray) {
       try {
         const compressedDataUrl = await compressImage(file);
-        
-        // Анализируем фото через ИИ
-        let price = null;
-        let description = '';
-        
-        try {
-          const analyzeResponse = await fetch(ANALYZE_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image_base64: compressedDataUrl }),
-          });
-          
-          if (analyzeResponse.ok) {
-            const aiData = await analyzeResponse.json();
-            price = aiData.price;
-            
-            const descParts = [];
-            if (aiData.material) descParts.push(`Материал: ${aiData.material}`);
-            if (aiData.size) descParts.push(`Размер: ${aiData.size}`);
-            description = descParts.join(', ');
-          }
-        } catch (aiError) {
-          console.log('AI analysis failed, using defaults', aiError);
-        }
         
         const response = await fetch(PRODUCTS_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: 'Ваза',
-            description,
-            price,
+            description: '',
+            price: null,
             in_stock: true,
             display_order: 0,
             photo_base64: compressedDataUrl,
@@ -398,6 +374,7 @@ export function ProductsAdmin() {
                     setEditingId(null);
                     setEditForm({});
                   }}
+                  onImageClick={setZoomedImage}
                 />
               </div>
             ) : (
@@ -412,6 +389,19 @@ export function ProductsAdmin() {
           </div>
         ))}
       </div>
+
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setZoomedImage(null)}
+        >
+          <img 
+            src={zoomedImage} 
+            alt="Увеличенное фото" 
+            className="max-w-full max-h-full object-contain rounded-lg"
+          />
+        </div>
+      )}
     </div>
   );
 }

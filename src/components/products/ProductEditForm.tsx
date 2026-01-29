@@ -8,10 +8,11 @@ interface Product {
 
 interface ProductEditFormProps {
   productId: number;
-  editForm: Partial<Product>;
+  editForm: Partial<Product> & { photos?: string[] };
   onFormChange: (form: Partial<Product>) => void;
   onSave: (id: number) => void;
   onCancel: () => void;
+  onImageClick?: (imageUrl: string) => void;
 }
 
 export function ProductEditForm({
@@ -20,9 +21,24 @@ export function ProductEditForm({
   onFormChange,
   onSave,
   onCancel,
+  onImageClick,
 }: ProductEditFormProps) {
   return (
     <div className="space-y-4">
+      {editForm.photos && editForm.photos.length > 0 && (
+        <div className="flex gap-2 flex-wrap mb-4">
+          {editForm.photos.map((photo, index) => (
+            <img
+              key={index}
+              src={photo}
+              alt={`Фото ${index + 1}`}
+              className="w-32 h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity border-2 border-primary"
+              onClick={() => onImageClick?.(photo)}
+              title="Нажмите, чтобы увеличить"
+            />
+          ))}
+        </div>
+      )}
       <div>
         <label className="block text-sm font-medium mb-2">Название</label>
         <input
