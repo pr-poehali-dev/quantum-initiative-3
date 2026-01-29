@@ -176,7 +176,7 @@ export function Catalog() {
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex justify-end mb-6">
           <a
-            href="/admin"
+            href="/admin#catalog"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group px-4 py-2 rounded-lg hover:bg-secondary/50"
           >
             <Icon name="Lock" size={16} />

@@ -124,7 +124,7 @@ export default function Admin() {
           />
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8" id="catalog">
           <ProductsAdmin />
         </div>
       </div>
