@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "name": "Generate QR code for suvelewood.online",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "qr_code": "string",
+        "url": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
