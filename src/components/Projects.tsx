@@ -255,18 +255,9 @@ export function Projects() {
   return (
     <section id="projects" className="py-32 md:py-29 bg-secondary/50">
       <div className="container mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-          <div>
-            <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Портфолио</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight">Наши изделия</h2>
-          </div>
-          <a
-            href="/admin"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group px-4 py-2 rounded-lg hover:bg-secondary/50"
-          >
-            <Icon name="Lock" size={16} />
-            Админ-панель
-          </a>
+        <div className="mb-16">
+          <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Портфолио</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight">Наши изделия</h2>
         </div>
 
         {projectsList.length === 0 ? (

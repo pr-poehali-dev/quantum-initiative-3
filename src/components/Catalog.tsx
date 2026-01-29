@@ -174,6 +174,15 @@ export function Catalog() {
   return (
     <section id="catalog" className="py-32 md:py-40 bg-muted/30">
       <div className="container mx-auto px-6 md:px-12">
+        <div className="flex justify-end mb-6">
+          <a
+            href="/admin"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group px-4 py-2 rounded-lg hover:bg-secondary/50"
+          >
+            <Icon name="Lock" size={16} />
+            Админ-панель
+          </a>
+        </div>
         <div className="max-w-3xl mb-20">
           <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Наш каталог</p>
           <h2 className="text-6xl md:text-7xl lg:text-8xl font-medium leading-[1.15] tracking-tight text-balance">

@@ -47,8 +47,8 @@ export default function Index() {
       <Hero />
       <Philosophy />
       <Process />
-      <Projects />
       <Catalog />
+      <Projects />
       <Blog />
       <Footer />
       <ShareButton />
