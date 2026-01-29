@@ -110,6 +110,30 @@ export function useMastersManagement(compressImage: (file: File) => Promise<stri
     }
   };
 
+  const deleteMaster = async (id: number) => {
+    if (!confirm('Удалить мастера?')) return;
+
+    try {
+      const response = await fetch(`${MASTERS_API}?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Удалено',
+          description: 'Мастер удален из базы',
+        });
+        loadMasters();
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить мастера',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return {
     masters,
     editingMasterId,
@@ -119,6 +143,7 @@ export function useMastersManagement(compressImage: (file: File) => Promise<stri
     cancelEditMaster,
     saveMaster,
     handleMasterPhotoUpload,
+    deleteMaster,
     setMasterForm,
   };
 }

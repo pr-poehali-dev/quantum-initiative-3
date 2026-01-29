@@ -16,6 +16,7 @@ interface MastersManagerProps {
   onCancelEdit: () => void;
   onSave: (id: number) => void;
   onPhotoUpload: (masterId: number, file: File) => void;
+  onDelete: (id: number) => void;
   onFormChange: (form: Partial<Master>) => void;
 }
 
@@ -27,6 +28,7 @@ export function MastersManager({
   onCancelEdit,
   onSave,
   onPhotoUpload,
+  onDelete,
   onFormChange,
 }: MastersManagerProps) {
   return (
@@ -101,6 +103,13 @@ export function MastersManager({
                         className="hidden"
                       />
                     </label>
+                    <button
+                      onClick={() => onDelete(master.id)}
+                      className="px-3 py-1 border border-destructive text-destructive rounded hover:bg-destructive hover:text-white transition-colors flex items-center gap-1"
+                    >
+                      <Icon name="Trash2" size={16} />
+                      Удалить
+                    </button>
                   </div>
                 </div>
               </div>

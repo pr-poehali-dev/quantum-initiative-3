@@ -7,7 +7,7 @@ def get_db_connection():
     return psycopg2.connect(os.environ['DATABASE_URL'])
 
 def handler(event: dict, context) -> dict:
-    '''API для управления мастерами: получение списка и обновление данных'''
+    '''API для управления мастерами: получение списка, обновление и удаление данных'''
     method = event.get('httpMethod', 'GET')
 
     if method == 'OPTIONS':
@@ -15,7 +15,7 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
             'body': '',
@@ -56,6 +56,28 @@ def handler(event: dict, context) -> dict:
                 'UPDATE masters SET name = %s, description = %s, photo_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
                 (name, description, photo_url, master_id)
             )
+            conn.commit()
+
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'success': True}),
+                'isBase64Encoded': False
+            }
+
+        elif method == 'DELETE':
+            query_params = event.get('queryStringParameters') or {}
+            master_id = query_params.get('id')
+
+            if not master_id:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Master ID required'}),
+                    'isBase64Encoded': False
+                }
+
+            cur.execute('DELETE FROM masters WHERE id = %s', (master_id,))
             conn.commit()
 
             return {

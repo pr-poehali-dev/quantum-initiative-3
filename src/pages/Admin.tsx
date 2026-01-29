@@ -48,6 +48,7 @@ export default function Admin() {
     cancelEditMaster,
     saveMaster,
     handleMasterPhotoUpload,
+    deleteMaster,
     setMasterForm,
   } = useMastersManagement(compressImage);
 
@@ -130,6 +131,7 @@ export default function Admin() {
             onCancelEdit={cancelEditMaster}
             onSave={saveMaster}
             onPhotoUpload={handleMasterPhotoUpload}
+            onDelete={deleteMaster}
             onFormChange={setMasterForm}
           />
         </div>
