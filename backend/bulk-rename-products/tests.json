@@ -1,0 +1,18 @@
+{
+  "tests": [
+    {
+      "name": "Переименование товаров",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "new_name": "Ваза",
+        "pattern": "test_%"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

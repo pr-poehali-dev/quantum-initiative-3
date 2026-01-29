@@ -1,11 +1,10 @@
 import json
-import base64
 import os
-import anthropic
+from openai import OpenAI
 
 
 def handler(event: dict, context) -> dict:
-    """Анализирует фото товара и извлекает цену, материал и размер с помощью Claude Vision API"""
+    """Анализирует фото товара и извлекает цену, материал и размер с помощью GPT-4 Vision API"""
     
     method = event.get('httpMethod', 'POST')
     
@@ -44,11 +43,7 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'error': 'image_base64 is required'})
             }
         
-        # Убираем префикс data:image/...;base64, если есть
-        if ',' in image_base64:
-            image_base64 = image_base64.split(',')[1]
-        
-        api_key = os.environ.get('ANTHROPIC_API_KEY')
+        api_key = os.environ.get('OPENAI_API_KEY')
         if not api_key:
             return {
                 'statusCode': 500,
@@ -56,26 +51,20 @@ def handler(event: dict, context) -> dict:
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': 'ANTHROPIC_API_KEY not configured'})
+                'body': json.dumps({'error': 'OPENAI_API_KEY not configured'})
             }
         
-        client = anthropic.Anthropic(api_key=api_key)
+        client = OpenAI(api_key=api_key)
         
-        message = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1024,
+        if not image_base64.startswith('data:'):
+            image_base64 = f"data:image/jpeg;base64,{image_base64}"
+        
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/jpeg",
-                                "data": image_base64,
-                            },
-                        },
                         {
                             "type": "text",
                             "text": """Проанализируй это фото товара. На фото внизу слева есть информация о цене и материале.
@@ -90,13 +79,20 @@ def handler(event: dict, context) -> dict:
   "material": "строка" или null,
   "size": "строка" или null
 }"""
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": image_base64
+                            }
                         }
-                    ],
+                    ]
                 }
             ],
+            max_tokens=300
         )
         
-        response_text = message.content[0].text.strip()
+        response_text = response.choices[0].message.content.strip()
         
         # Пытаемся извлечь JSON из ответа
         if '```json' in response_text:
