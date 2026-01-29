@@ -264,6 +264,63 @@ export function ProductsAdmin() {
     }
   };
 
+  const handleBulkPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileArray = Array.from(files);
+    let successCount = 0;
+    let errorCount = 0;
+
+    setLoading(true);
+
+    for (const file of fileArray) {
+      try {
+        const compressedDataUrl = await compressImage(file);
+        const fileName = file.name.replace(/\.[^/.]+$/, '');
+        
+        const response = await fetch(PRODUCTS_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fileName,
+            description: '',
+            price: null,
+            in_stock: true,
+            display_order: 0,
+            photo_base64: compressedDataUrl,
+          }),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          errorCount++;
+        }
+      } catch (error) {
+        errorCount++;
+      }
+    }
+
+    setLoading(false);
+
+    if (successCount > 0) {
+      toast({
+        title: 'Загрузка завершена',
+        description: `Создано товаров: ${successCount}${errorCount > 0 ? `, ошибок: ${errorCount}` : ''}`,
+      });
+      loadProducts();
+    } else {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить фотографии',
+        variant: 'destructive',
+      });
+    }
+
+    e.target.value = '';
+  };
+
   if (loading) {
     return <div className="text-center py-8">Загрузка...</div>;
   }
@@ -272,12 +329,24 @@ export function ProductsAdmin() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Управление каталогом</h2>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
-        >
-          {showAddForm ? 'Отмена' : 'Добавить товар'}
-        </button>
+        <div className="flex gap-2">
+          <label className="px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-secondary/80 transition-colors cursor-pointer">
+            Массовая загрузка фото
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleBulkPhotoUpload}
+              className="hidden"
+            />
+          </label>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+          >
+            {showAddForm ? 'Отмена' : 'Добавить товар'}
+          </button>
+        </div>
       </div>
 
       {showAddForm && (
