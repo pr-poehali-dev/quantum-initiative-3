@@ -55,6 +55,16 @@ export default function Admin() {
     if (isAuthenticated) {
       loadMedia();
       loadMasters();
+      
+      setTimeout(() => {
+        const hash = window.location.hash;
+        if (hash === '#catalog') {
+          const catalogElement = document.getElementById('catalog');
+          if (catalogElement) {
+            catalogElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }, 100);
     }
   }, [isAuthenticated]);
 
