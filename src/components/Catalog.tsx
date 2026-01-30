@@ -229,7 +229,7 @@ export function Catalog() {
                       onClick={(e) => {
                         e.stopPropagation()
                         const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
-                        window.open(`https://t.me/maksimkalabukhov?text=${encodeURIComponent(message)}`, '_blank')
+                        window.open(`https://t.me/ANDERSONKOV?text=${encodeURIComponent(message)}`, '_blank')
                       }}
                       className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
                     >
