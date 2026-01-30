@@ -273,26 +273,15 @@ export function Catalog() {
                     {product.price !== null && (
                       <p className="text-2xl font-medium">{product.price.toLocaleString('ru-RU')} ₽</p>
                     )}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleOrderClick(index, product.name, 'ANDERSONKOV')
-                        }}
-                        className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
-                      >
-                        Заказать
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleOrderClick(index, product.name, '+79233708882')
-                        }}
-                        className="flex-1 px-6 py-3 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors font-medium"
-                      >
-                        Запасной контакт
-                      </button>
-                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOrderClick(index, product.name, 'ANDERSONKOV')
+                      }}
+                      className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                    >
+                      Заказать
+                    </button>
                   </div>
                 </div>
               )
