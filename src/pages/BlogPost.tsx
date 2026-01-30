@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Icon from '@/components/ui/icon'
 
@@ -123,6 +124,27 @@ export default function BlogPost() {
   const navigate = useNavigate()
   
   const post = id ? blogPostsData[id] : null
+
+  useEffect(() => {
+    if (post) {
+      document.title = `${post.title} | Natural Masterpieces`
+      
+      const metaDescription = document.querySelector('meta[name="description"]')
+      if (metaDescription) {
+        metaDescription.setAttribute('content', post.content[0])
+      }
+      
+      const metaKeywords = document.querySelector('meta[name="keywords"]')
+      if (metaKeywords) {
+        const keywords = `${post.title}, ${post.category}, изделия из дерева, кап березы, сувель, деревянные сувениры, ручная работа, natural masterpieces`
+        metaKeywords.setAttribute('content', keywords)
+      }
+    }
+
+    return () => {
+      document.title = 'Изделия из дерева ручной работы | Natural Masterpieces - Сувениры из капа и сувели'
+    }
+  }, [post])
 
   if (!post) {
     return (
