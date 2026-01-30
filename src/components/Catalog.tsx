@@ -225,16 +225,28 @@ export function Catalog() {
                     {product.price !== null && (
                       <p className="text-2xl font-medium">{product.price.toLocaleString('ru-RU')} ₽</p>
                     )}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
-                        window.open(`https://t.me/ANDERSONKOV?text=${encodeURIComponent(message)}`, '_blank')
-                      }}
-                      className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
-                    >
-                      Заказать в Telegram
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
+                          window.open(`https://t.me/ANDERSONKOV?text=${encodeURIComponent(message)}`, '_blank')
+                        }}
+                        className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                      >
+                        Заказать
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
+                          window.open(`https://t.me/+79233708882?text=${encodeURIComponent(message)}`, '_blank')
+                        }}
+                        className="flex-1 px-6 py-3 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors font-medium"
+                      >
+                        Запасной контакт
+                      </button>
+                    </div>
                   </div>
                 </div>
               )
