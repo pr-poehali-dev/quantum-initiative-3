@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export function Footer() {
   return (
     <footer className="py-16 md:py-24 border-t border-border">
@@ -72,12 +74,9 @@ export function Footer() {
         <div className="pt-8 border-t border-border flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© 2025 Студия Декора. Все права защищены.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-foreground transition-colors">
+            <Link to="/privacy" className="hover:text-foreground transition-colors">
               Политика конфиденциальности
-            </a>
-            <a href="#" className="hover:text-foreground transition-colors">
-              Условия использования
-            </a>
+            </Link>
           </div>
         </div>
       </div>
