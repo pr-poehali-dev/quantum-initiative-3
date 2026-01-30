@@ -32,6 +32,7 @@ export function Catalog() {
   const [customerName, setCustomerName] = useState('')
   const [contactMethod, setContactMethod] = useState('telegram')
   const [contactValue, setContactValue] = useState('')
+  const [orderComment, setOrderComment] = useState('')
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -191,7 +192,8 @@ export function Catalog() {
           customer_name: customerName,
           customer_phone: contactMethod === 'phone' || contactMethod === 'telegram' ? contactValue : '',
           contact_method: contactMethod,
-          contact_value: contactValue
+          contact_value: contactValue,
+          comment: orderComment
         })
       })
 
@@ -210,6 +212,7 @@ export function Catalog() {
     setCustomerName('')
     setContactValue('')
     setContactMethod('telegram')
+    setOrderComment('')
     setSelectedProduct(null)
   }
 
@@ -498,6 +501,17 @@ export function Catalog() {
                     'VK, WhatsApp, другой способ связи'
                   }
                   className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Комментарий (необязательно)</label>
+                <textarea
+                  value={orderComment}
+                  onChange={(e) => setOrderComment(e.target.value)}
+                  placeholder="Пожелания по доставке, вопросы или другие детали..."
+                  rows={3}
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 />
               </div>
 
