@@ -297,37 +297,38 @@ export function Catalog() {
             </p>
           </div>
 
-          <div
-            className="relative max-w-[90vw] max-h-[90vh] overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-            onDoubleClick={handleDoubleClick}
-            onWheel={handleWheel}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStartDrag}
-            onTouchMove={handleTouchMoveDrag}
-            onTouchEnd={handleTouchEndDrag}
-            style={{ cursor: zoom > 1 ? 'move' : 'zoom-in' }}
-          >
-            <img
-              src={getProductImage(products[currentIndex])}
-              alt={products[currentIndex].name}
-              className="max-w-full max-h-[90vh] object-contain select-none"
-              style={{
-                transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
-                transition: isDragging ? 'none' : 'transform 0.2s ease-out'
-              }}
-              draggable={false}
-            />
-            <div className="absolute top-4 left-4 bg-black/50 px-4 py-2 rounded-lg">
-              <h3 className="text-white text-xl font-medium">{products[currentIndex].name}</h3>
+          <div className="flex flex-col items-center max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="relative max-h-[70vh] mb-4 overflow-hidden"
+              onDoubleClick={handleDoubleClick}
+              onWheel={handleWheel}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStartDrag}
+              onTouchMove={handleTouchMoveDrag}
+              onTouchEnd={handleTouchEndDrag}
+              style={{ cursor: zoom > 1 ? 'move' : 'zoom-in' }}
+            >
+              <img
+                src={getProductImage(products[currentIndex])}
+                alt={products[currentIndex].name}
+                className="max-w-full max-h-[70vh] object-contain select-none"
+                style={{
+                  transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                  transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                }}
+                draggable={false}
+              />
+            </div>
+            <div className="w-full max-w-lg bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg">
+              <h3 className="text-white text-lg md:text-xl font-medium">{products[currentIndex].name}</h3>
               {products[currentIndex].description && (
                 <p className="text-white/70 text-sm mt-1">{products[currentIndex].description}</p>
               )}
               {products[currentIndex].price !== null && (
-                <p className="text-white text-lg font-medium mt-2">
+                <p className="text-white text-base md:text-lg font-medium mt-2">
                   {products[currentIndex].price.toLocaleString('ru-RU')} ₽
                 </p>
               )}
