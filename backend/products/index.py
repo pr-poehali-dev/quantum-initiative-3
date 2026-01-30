@@ -47,7 +47,7 @@ def handle_get(conn, event) -> dict:
     '''Получить список всех товаров'''
     cur = conn.cursor()
     cur.execute('''
-        SELECT id, name, description, price, photo_url, photos, in_stock, display_order, created_at
+        SELECT id, name, description, price, photo_url, photos, in_stock, display_order, created_at, product_number
         FROM products
         ORDER BY display_order ASC, created_at DESC
     ''')
@@ -67,7 +67,8 @@ def handle_get(conn, event) -> dict:
             'photos': photos,
             'in_stock': row[6],
             'display_order': row[7],
-            'created_at': row[8].isoformat() if row[8] else None
+            'created_at': row[8].isoformat() if row[8] else None,
+            'product_number': row[9]
         })
     
     cur.close()
@@ -87,6 +88,7 @@ def handle_post(conn, event) -> dict:
     price = body.get('price')
     in_stock = body.get('in_stock', True)
     display_order = body.get('display_order', 0)
+    product_number = body.get('product_number', '')
     photo_base64 = body.get('photo_base64')
     
     if not name:
@@ -101,10 +103,10 @@ def handle_post(conn, event) -> dict:
     
     cur = conn.cursor()
     cur.execute('''
-        INSERT INTO products (name, description, price, photo_url, photos, in_stock, display_order)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO products (name, description, price, photo_url, photos, in_stock, display_order, product_number)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id
-    ''', (name, description, price, photo_url, json.dumps(photos), in_stock, display_order))
+    ''', (name, description, price, photo_url, json.dumps(photos), in_stock, display_order, product_number))
     
     product_id = cur.fetchone()[0]
     conn.commit()
@@ -134,6 +136,7 @@ def handle_put(conn, event) -> dict:
     price = body.get('price')
     in_stock = body.get('in_stock')
     display_order = body.get('display_order')
+    product_number = body.get('product_number')
     photo_base64 = body.get('photo_base64')
     
     photo_url = None
@@ -158,6 +161,9 @@ def handle_put(conn, event) -> dict:
     if display_order is not None:
         updates.append('display_order = %s')
         params.append(display_order)
+    if product_number is not None:
+        updates.append('product_number = %s')
+        params.append(product_number)
     if photo_url:
         updates.append('photo_url = %s')
         params.append(photo_url)

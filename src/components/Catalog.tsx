@@ -15,6 +15,7 @@ interface Product {
   in_stock: boolean
   display_order: number
   created_at: string | null
+  product_number?: string
 }
 
 export function Catalog() {
@@ -29,7 +30,7 @@ export function Catalog() {
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [orderFormOpen, setOrderFormOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<{ index: number; name: string; telegram: string } | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<{ index: number; name: string; telegram: string; productNumber?: string } | null>(null)
   const [customerName, setCustomerName] = useState('')
   const [contactMethod, setContactMethod] = useState('telegram')
   const [contactValue, setContactValue] = useState('')
@@ -169,8 +170,8 @@ export function Catalog() {
     return product.photo_url || ''
   }
 
-  const handleOrderClick = (index: number, name: string, telegram: string) => {
-    setSelectedProduct({ index, name, telegram })
+  const handleOrderClick = (index: number, name: string, telegram: string, productNumber?: string) => {
+    setSelectedProduct({ index, name, telegram, productNumber })
     setOrderFormOpen(true)
   }
 
@@ -280,7 +281,9 @@ export function Catalog() {
                     )}
                   </div>
                   <div className="space-y-3">
-                    <h3 className="text-xl md:text-2xl font-medium">№{index + 1}. {product.name}</h3>
+                    <h3 className="text-xl md:text-2xl font-medium">
+                      {product.product_number ? `№${product.product_number}` : `№${index + 1}`}. {product.name}
+                    </h3>
                     {product.description && (
                       <p className="text-muted-foreground leading-relaxed">{product.description}</p>
                     )}
@@ -290,7 +293,7 @@ export function Catalog() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleOrderClick(index, product.name, 'ANDERSONKOV')
+                        handleOrderClick(index, product.name, 'ANDERSONKOV', product.product_number)
                       }}
                       className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
                     >
@@ -394,7 +397,9 @@ export function Catalog() {
               />
             </div>
             <div className="w-full max-w-lg bg-black/60 backdrop-blur-sm px-4 py-3 rounded-lg">
-              <h3 className="text-white text-lg md:text-xl font-medium">{products[currentIndex].name}</h3>
+              <h3 className="text-white text-lg md:text-xl font-medium">
+                {products[currentIndex].product_number ? `№${products[currentIndex].product_number}` : `№${currentIndex + 1}`}. {products[currentIndex].name}
+              </h3>
               {products[currentIndex].description && (
                 <p className="text-white/70 text-sm mt-1">{products[currentIndex].description}</p>
               )}
@@ -429,7 +434,7 @@ export function Catalog() {
 
             {selectedProduct && (
               <p className="text-muted-foreground mb-6">
-                №{selectedProduct.index + 1}. {selectedProduct.name}
+                {selectedProduct.productNumber ? `№${selectedProduct.productNumber}` : `№${selectedProduct.index + 1}`}. {selectedProduct.name}
               </p>
             )}
 

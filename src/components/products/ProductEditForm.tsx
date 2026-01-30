@@ -4,6 +4,7 @@ interface Product {
   price?: number | null;
   in_stock?: boolean;
   display_order?: number;
+  product_number?: string;
 }
 
 interface ProductEditFormProps {
@@ -39,14 +40,26 @@ export function ProductEditForm({
           ))}
         </div>
       )}
-      <div>
-        <label className="block text-sm font-medium mb-2">Название</label>
-        <input
-          type="text"
-          value={editForm.name || ''}
-          onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-          className="w-full px-4 py-2 border rounded-md"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Номер товара</label>
+          <input
+            type="text"
+            value={editForm.product_number || ''}
+            onChange={(e) => onFormChange({ ...editForm, product_number: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            placeholder="например: 1, A-5, В-12"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Название</label>
+          <input
+            type="text"
+            value={editForm.name || ''}
+            onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+          />
+        </div>
       </div>
 
       <div>

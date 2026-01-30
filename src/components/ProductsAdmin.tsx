@@ -15,6 +15,7 @@ interface Product {
   photos: string[];
   in_stock: boolean;
   display_order: number;
+  product_number?: string;
 }
 
 export function ProductsAdmin() {
@@ -28,6 +29,7 @@ export function ProductsAdmin() {
     price: null,
     in_stock: true,
     display_order: 0,
+    product_number: '',
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
@@ -158,6 +160,7 @@ export function ProductsAdmin() {
           price: null,
           in_stock: true,
           display_order: 0,
+          product_number: '',
         });
         setShowAddForm(false);
         await loadProducts();
@@ -211,6 +214,7 @@ export function ProductsAdmin() {
       price: product.price,
       in_stock: product.in_stock,
       display_order: product.display_order,
+      product_number: product.product_number || '',
       photos: allPhotos,
     });
   };

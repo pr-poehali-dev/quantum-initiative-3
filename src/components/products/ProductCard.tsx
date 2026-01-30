@@ -9,6 +9,7 @@ interface Product {
   photos: string[];
   in_stock: boolean;
   display_order: number;
+  product_number?: string;
 }
 
 interface ProductCardProps {
@@ -66,7 +67,9 @@ export function ProductCard({
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h3 className="text-xl font-bold">№{index + 1}. {product.name}</h3>
+              <h3 className="text-xl font-bold">
+                {product.product_number ? `№${product.product_number}` : `№${index + 1}`}. {product.name}
+              </h3>
               {product.description && (
                 <p className="text-muted-foreground mt-1">{product.description}</p>
               )}

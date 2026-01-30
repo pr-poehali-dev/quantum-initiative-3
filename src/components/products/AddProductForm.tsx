@@ -4,6 +4,7 @@ interface Product {
   price?: number | null;
   in_stock?: boolean;
   display_order?: number;
+  product_number?: string;
   photo_base64?: string;
 }
 
@@ -26,15 +27,27 @@ export function AddProductForm({
     <div className="bg-card p-6 rounded-lg border space-y-4">
       <h3 className="text-xl font-bold">Новый товар</h3>
       
-      <div>
-        <label className="block text-sm font-medium mb-2">Название *</label>
-        <input
-          type="text"
-          value={newProduct.name || ''}
-          onChange={(e) => onFormChange({ ...newProduct, name: e.target.value })}
-          className="w-full px-4 py-2 border rounded-md"
-          placeholder="Деревянная шкатулка"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Номер товара</label>
+          <input
+            type="text"
+            value={newProduct.product_number || ''}
+            onChange={(e) => onFormChange({ ...newProduct, product_number: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            placeholder="например: 1, A-5, В-12"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Название *</label>
+          <input
+            type="text"
+            value={newProduct.name || ''}
+            onChange={(e) => onFormChange({ ...newProduct, name: e.target.value })}
+            className="w-full px-4 py-2 border rounded-md"
+            placeholder="Деревянная шкатулка"
+          />
+        </div>
       </div>
 
       <div>
