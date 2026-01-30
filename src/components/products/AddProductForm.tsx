@@ -35,8 +35,11 @@ export function AddProductForm({
             value={newProduct.product_number || ''}
             onChange={(e) => onFormChange({ ...newProduct, product_number: e.target.value })}
             className="w-full px-4 py-2 border rounded-md"
-            placeholder="например: 1, A-5, В-12"
+            placeholder="Оставьте пустым для автонумерации"
           />
+          <p className="text-xs text-muted-foreground mt-1">
+            Если не указать, будет автоматически: следующий номер по порядку
+          </p>
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Название *</label>

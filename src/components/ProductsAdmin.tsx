@@ -143,16 +143,26 @@ export function ProductsAdmin() {
 
     try {
       setLoading(true);
+      
+      let productNumber = newProduct.product_number;
+      if (!productNumber) {
+        const maxNumber = products.reduce((max, p) => {
+          const num = parseInt(p.product_number || '0');
+          return num > max ? num : max;
+        }, 0);
+        productNumber = String(maxNumber + 1);
+      }
+      
       const response = await fetch(PRODUCTS_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct),
+        body: JSON.stringify({ ...newProduct, product_number: productNumber }),
       });
 
       if (response.ok) {
         toast({
           title: 'Товар добавлен',
-          description: 'Новый товар успешно создан',
+          description: `Новый товар #${productNumber} успешно создан`,
         });
         setNewProduct({
           name: '',
@@ -284,9 +294,15 @@ export function ProductsAdmin() {
 
     setLoading(true);
 
+    let maxNumber = products.reduce((max, p) => {
+      const num = parseInt(p.product_number || '0');
+      return num > max ? num : max;
+    }, 0);
+
     for (const file of fileArray) {
       try {
         const compressedDataUrl = await compressImage(file);
+        maxNumber++;
         
         const response = await fetch(PRODUCTS_API, {
           method: 'POST',
@@ -297,6 +313,7 @@ export function ProductsAdmin() {
             price: null,
             in_stock: true,
             display_order: 0,
+            product_number: String(maxNumber),
             photo_base64: compressedDataUrl,
           }),
         });
