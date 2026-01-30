@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { HighlightedText } from "./HighlightedText"
 import Icon from "@/components/ui/icon"
 
@@ -33,6 +34,7 @@ export function Catalog() {
   const [contactMethod, setContactMethod] = useState('telegram')
   const [contactValue, setContactValue] = useState('')
   const [orderComment, setOrderComment] = useState('')
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -177,6 +179,10 @@ export function Catalog() {
       alert('Пожалуйста, заполните все поля')
       return
     }
+    if (!privacyAccepted) {
+      alert('Необходимо согласие с политикой конфиденциальности')
+      return
+    }
     if (!selectedProduct) return
 
     try {
@@ -213,6 +219,7 @@ export function Catalog() {
     setContactValue('')
     setContactMethod('telegram')
     setOrderComment('')
+    setPrivacyAccepted(false)
     setSelectedProduct(null)
   }
 
@@ -515,9 +522,32 @@ export function Catalog() {
                 />
               </div>
 
+              <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-md">
+                <input
+                  type="checkbox"
+                  id="privacy-checkbox"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="mt-1 w-4 h-4 accent-primary cursor-pointer"
+                />
+                <label htmlFor="privacy-checkbox" className="text-sm text-muted-foreground cursor-pointer">
+                  Я согласен с{' '}
+                  <Link 
+                    to="/privacy" 
+                    target="_blank"
+                    className="text-primary hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    политикой конфиденциальности
+                  </Link>
+                  {' '}и даю согласие на обработку персональных данных
+                </label>
+              </div>
+
               <button
                 onClick={submitOrder}
-                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                disabled={!privacyAccepted}
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Отправить заказ
               </button>
