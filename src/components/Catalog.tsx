@@ -20,8 +20,6 @@ interface Product {
 
 export function Catalog() {
   const [products, setProducts] = useState<Product[]>([])
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -44,9 +42,7 @@ export function Catalog() {
       try {
         const response = await fetch(PRODUCTS_API)
         const data = await response.json()
-        const inStockProducts = Array.isArray(data) ? data.filter(p => p.in_stock) : []
-        setProducts(inStockProducts)
-        setFilteredProducts(inStockProducts)
+        setProducts(Array.isArray(data) ? data.filter(p => p.in_stock) : [])
       } catch (error) {
         console.error('Failed to load products:', error)
       } finally {
@@ -56,30 +52,8 @@ export function Catalog() {
     loadProducts()
   }, [])
 
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredProducts(products)
-      return
-    }
-
-    const query = searchQuery.toLowerCase().trim()
-    const filtered = products.filter(product => {
-      const searchText = [
-        product.name,
-        product.description,
-        product.product_number,
-        product.price?.toString()
-      ].filter(Boolean).join(' ').toLowerCase()
-      
-      return searchText.includes(query)
-    })
-    
-    setFilteredProducts(filtered)
-  }, [searchQuery, products])
-
   const openLightbox = (index: number) => {
-    const productIndex = products.findIndex(p => p.id === filteredProducts[index].id)
-    setCurrentIndex(productIndex)
+    setCurrentIndex(index)
     setLightboxOpen(true)
     setZoom(1)
     setPosition({ x: 0, y: 0 })
@@ -272,53 +246,20 @@ export function Catalog() {
             Админ-панель
           </a>
         </div>
-        <div className="max-w-3xl mb-12">
+        <div className="max-w-3xl mb-20">
           <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Наш каталог</p>
           <h2 className="text-6xl md:text-7xl lg:text-8xl font-medium leading-[1.15] tracking-tight text-balance">
             Изделия в <HighlightedText>наличии</HighlightedText>
           </h2>
         </div>
 
-        <div className="max-w-2xl mx-auto mb-16">
-          <div className="relative">
-            <Icon name="Search" size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Поиск по названию, описанию, номеру..."
-              className="w-full pl-12 pr-12 py-4 text-lg border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Очистить"
-              >
-                <Icon name="X" size={20} />
-              </button>
-            )}
-          </div>
-          {searchQuery && (
-            <p className="text-sm text-muted-foreground mt-3 text-center">
-              Найдено: {filteredProducts.length} {filteredProducts.length === 1 ? 'товар' : filteredProducts.length < 5 ? 'товара' : 'товаров'}
-            </p>
-          )}
-        </div>
-
-        {filteredProducts.length === 0 && searchQuery ? (
-          <div className="text-center py-20">
-            <Icon name="SearchX" size={64} className="mx-auto text-muted-foreground/50 mb-4" />
-            <p className="text-xl text-muted-foreground mb-2">Ничего не найдено</p>
-            <p className="text-muted-foreground">Попробуйте изменить запрос</p>
-          </div>
-        ) : filteredProducts.length === 0 ? (
+        {products.length === 0 ? (
           <p className="text-center text-muted-foreground text-lg">
             В данный момент нет товаров в наличии
           </p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-            {filteredProducts.map((product, index) => {
+            {products.map((product, index) => {
               const imageUrl = getProductImage(product)
               return (
                 <div
