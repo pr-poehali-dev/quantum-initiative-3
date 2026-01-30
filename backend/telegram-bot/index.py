@@ -88,8 +88,11 @@ def create_order(data: dict) -> dict:
     product_name = data.get('product_name')
     customer_name = data.get('customer_name')
     customer_phone = data.get('customer_phone')
+    contact_method = data.get('contact_method', 'telegram')
+    contact_value = data.get('contact_value', customer_phone)
+    comment = data.get('comment', '')
     
-    if not all([product_index is not None, product_name, customer_name, customer_phone]):
+    if not all([product_index is not None, product_name, customer_name]):
         return {
             'statusCode': 400,
             'headers': {'Content-Type': 'application/json'},
@@ -104,7 +107,7 @@ def create_order(data: dict) -> dict:
     cursor.execute(
         "INSERT INTO orders (product_index, product_name, customer_name, customer_phone) "
         "VALUES (%s, %s, %s, %s) RETURNING id, created_at",
-        (product_index, product_name, customer_name, customer_phone)
+        (product_index, product_name, customer_name, contact_value if contact_method in ['phone', 'telegram'] else '')
     )
     order_id, created_at = cursor.fetchone()
     conn.commit()
@@ -115,13 +118,23 @@ def create_order(data: dict) -> dict:
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     owner_id = os.environ.get('TELEGRAM_OWNER_ID')
     
+    contact_label = {
+        'telegram': '📱 Telegram',
+        'phone': '☎️ Телефон',
+        'email': '📧 Email',
+        'other': '💬 Контакт'
+    }.get(contact_method, '💬 Контакт')
+    
     message = (
         f"📦 <b>Новый заказ #{order_id}</b>\n\n"
         f"<b>Товар:</b> №{product_index + 1}. {product_name}\n"
         f"<b>Клиент:</b> {customer_name}\n"
-        f"<b>Телефон:</b> {customer_phone}\n"
+        f"<b>{contact_label}:</b> {contact_value}\n"
         f"<b>Время:</b> {created_at.strftime('%d.%m.%Y %H:%M')}"
     )
+    
+    if comment:
+        message += f"\n\n💭 <b>Комментарий:</b>\n{comment}"
     
     send_telegram_message(bot_token, owner_id, message)
     
