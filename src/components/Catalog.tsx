@@ -218,7 +218,7 @@ export function Catalog() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-xl md:text-2xl font-medium">{product.name}</h3>
+                    <h3 className="text-xl md:text-2xl font-medium">№{index + 1}. {product.name}</h3>
                     {product.description && (
                       <p className="text-muted-foreground leading-relaxed">{product.description}</p>
                     )}

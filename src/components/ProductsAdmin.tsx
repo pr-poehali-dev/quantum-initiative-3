@@ -365,7 +365,7 @@ export function ProductsAdmin() {
       )}
 
       <div className="grid gap-4">
-        {products.map((product) => (
+        {products.map((product, index) => (
           <div key={product.id}>
             {editingId === product.id ? (
               <div className="bg-card p-6 rounded-lg border">
@@ -384,6 +384,7 @@ export function ProductsAdmin() {
             ) : (
               <ProductCard
                 product={product}
+                index={index}
                 onEdit={startEdit}
                 onDelete={handleDelete}
                 onPhotoUpload={handlePhotoUpload}

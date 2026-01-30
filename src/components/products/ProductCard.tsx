@@ -13,6 +13,7 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  index: number;
   onEdit: (product: Product) => void;
   onDelete: (id: number) => void;
   onPhotoUpload: (productId: number, file: File) => void;
@@ -21,6 +22,7 @@ interface ProductCardProps {
 
 export function ProductCard({
   product,
+  index,
   onEdit,
   onDelete,
   onPhotoUpload,
@@ -64,7 +66,7 @@ export function ProductCard({
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h3 className="text-xl font-bold">{product.name}</h3>
+              <h3 className="text-xl font-bold">№{index + 1}. {product.name}</h3>
               {product.description && (
                 <p className="text-muted-foreground mt-1">{product.description}</p>
               )}
