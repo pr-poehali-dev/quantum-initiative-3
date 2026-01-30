@@ -55,19 +55,25 @@ def handler(event: dict, context) -> dict:
 
 def handle_telegram_message(update: dict) -> dict:
     """Обработка входящих сообщений от Telegram"""
+    print(f"Received update: {json.dumps(update)}")
+    
     message = update.get('message', {})
     chat_id = message.get('chat', {}).get('id')
     text = message.get('text', '')
     
+    print(f"Chat ID: {chat_id}, Text: {text}")
+    
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     
     if text == '/start':
-        send_telegram_message(
+        print(f"Sending /start response to chat {chat_id}")
+        result = send_telegram_message(
             bot_token,
             chat_id,
             "👋 Привет! Я бот магазина Natural Masterpieces.\n\n"
             "Я помогу оформить заказ. Просто нажмите кнопку 'Заказать' на сайте!"
         )
+        print(f"Send result: {result}")
     
     return {
         'statusCode': 200,
@@ -133,7 +139,7 @@ def create_order(data: dict) -> dict:
     }
 
 
-def send_telegram_message(bot_token: str, chat_id: int | str, text: str) -> None:
+def send_telegram_message(bot_token: str, chat_id: int | str, text: str) -> dict:
     """Отправка сообщения через Telegram Bot API"""
     import urllib.request
     
@@ -154,6 +160,9 @@ def send_telegram_message(bot_token: str, chat_id: int | str, text: str) -> None
     
     try:
         with urllib.request.urlopen(req, timeout=10) as response:
-            response.read()
-    except Exception:
-        pass
+            result = response.read().decode('utf-8')
+            print(f"Telegram API response: {result}")
+            return json.loads(result)
+    except Exception as e:
+        print(f"Error sending message: {str(e)}")
+        return {'ok': False, 'error': str(e)}
