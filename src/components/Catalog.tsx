@@ -30,7 +30,8 @@ export function Catalog() {
   const [orderFormOpen, setOrderFormOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<{ index: number; name: string; telegram: string } | null>(null)
   const [customerName, setCustomerName] = useState('')
-  const [customerPhone, setCustomerPhone] = useState('')
+  const [contactMethod, setContactMethod] = useState('telegram')
+  const [contactValue, setContactValue] = useState('')
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -171,8 +172,8 @@ export function Catalog() {
   }
 
   const submitOrder = async () => {
-    if (!customerName.trim() || !customerPhone.trim()) {
-      alert('Пожалуйста, укажите ваше имя и телефон')
+    if (!customerName.trim() || !contactValue.trim()) {
+      alert('Пожалуйста, заполните все поля')
       return
     }
     if (!selectedProduct) return
@@ -188,7 +189,9 @@ export function Catalog() {
           product_index: selectedProduct.index,
           product_name: selectedProduct.name,
           customer_name: customerName,
-          customer_phone: customerPhone
+          customer_phone: contactMethod === 'phone' || contactMethod === 'telegram' ? contactValue : '',
+          contact_method: contactMethod,
+          contact_value: contactValue
         })
       })
 
@@ -205,7 +208,8 @@ export function Catalog() {
     
     setOrderFormOpen(false)
     setCustomerName('')
-    setCustomerPhone('')
+    setContactValue('')
+    setContactMethod('telegram')
     setSelectedProduct(null)
   }
 
@@ -432,12 +436,67 @@ export function Catalog() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Телефон</label>
+                <label className="block text-sm font-medium mb-2">Как с вами связаться?</label>
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setContactMethod('telegram')}
+                    className={`px-4 py-2 rounded-md border transition-colors ${
+                      contactMethod === 'telegram' 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background hover:bg-muted border-border'
+                    }`}
+                  >
+                    <Icon name="MessageCircle" size={16} className="inline mr-1" />
+                    Telegram
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContactMethod('phone')}
+                    className={`px-4 py-2 rounded-md border transition-colors ${
+                      contactMethod === 'phone' 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background hover:bg-muted border-border'
+                    }`}
+                  >
+                    <Icon name="Phone" size={16} className="inline mr-1" />
+                    Телефон
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContactMethod('email')}
+                    className={`px-4 py-2 rounded-md border transition-colors ${
+                      contactMethod === 'email' 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background hover:bg-muted border-border'
+                    }`}
+                  >
+                    <Icon name="Mail" size={16} className="inline mr-1" />
+                    Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContactMethod('other')}
+                    className={`px-4 py-2 rounded-md border transition-colors ${
+                      contactMethod === 'other' 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : 'bg-background hover:bg-muted border-border'
+                    }`}
+                  >
+                    <Icon name="MessageSquare" size={16} className="inline mr-1" />
+                    Другое
+                  </button>
+                </div>
                 <input
-                  type="tel"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  placeholder="+7 999 123-45-67"
+                  type={contactMethod === 'email' ? 'email' : 'text'}
+                  value={contactValue}
+                  onChange={(e) => setContactValue(e.target.value)}
+                  placeholder={
+                    contactMethod === 'telegram' ? '@username или +7 999 123-45-67' :
+                    contactMethod === 'phone' ? '+7 999 123-45-67' :
+                    contactMethod === 'email' ? 'example@mail.ru' :
+                    'VK, WhatsApp, другой способ связи'
+                  }
                   className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
