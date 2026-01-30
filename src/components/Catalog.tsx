@@ -27,6 +27,10 @@ export function Catalog() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
+  const [orderFormOpen, setOrderFormOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<{ index: number; name: string; telegram: string } | null>(null)
+  const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -161,6 +165,27 @@ export function Catalog() {
     return product.photo_url || ''
   }
 
+  const handleOrderClick = (index: number, name: string, telegram: string) => {
+    setSelectedProduct({ index, name, telegram })
+    setOrderFormOpen(true)
+  }
+
+  const submitOrder = () => {
+    if (!customerName.trim() || !customerPhone.trim()) {
+      alert('Пожалуйста, укажите ваше имя и телефон')
+      return
+    }
+    if (!selectedProduct) return
+
+    const message = `Здравствуйте! Хочу заказать №${selectedProduct.index + 1}. ${selectedProduct.name}\n\nКонтакты:\nИмя: ${customerName}\nТелефон: ${customerPhone}`
+    window.open(`https://t.me/${selectedProduct.telegram}?text=${encodeURIComponent(message)}`, '_blank')
+    
+    setOrderFormOpen(false)
+    setCustomerName('')
+    setCustomerPhone('')
+    setSelectedProduct(null)
+  }
+
   if (loading) {
     return (
       <section id="catalog" className="py-32 md:py-40">
@@ -229,8 +254,7 @@ export function Catalog() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
-                          window.open(`https://t.me/ANDERSONKOV?text=${encodeURIComponent(message)}`, '_blank')
+                          handleOrderClick(index, product.name, 'ANDERSONKOV')
                         }}
                         className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
                       >
@@ -239,8 +263,7 @@ export function Catalog() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
-                          window.open(`https://t.me/+79233708882?text=${encodeURIComponent(message)}`, '_blank')
+                          handleOrderClick(index, product.name, '+79233708882')
                         }}
                         className="flex-1 px-6 py-3 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors font-medium"
                       >
@@ -354,6 +377,65 @@ export function Catalog() {
                   {products[currentIndex].price.toLocaleString('ru-RU')} ₽
                 </p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {orderFormOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setOrderFormOpen(false)}
+        >
+          <div
+            className="bg-background rounded-lg p-8 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-medium">Оформление заказа</h3>
+              <button
+                onClick={() => setOrderFormOpen(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Icon name="X" size={24} />
+              </button>
+            </div>
+
+            {selectedProduct && (
+              <p className="text-muted-foreground mb-6">
+                №{selectedProduct.index + 1}. {selectedProduct.name}
+              </p>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Ваше имя</label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Иван"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Телефон</label>
+                <input
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  placeholder="+7 999 123-45-67"
+                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <button
+                onClick={submitOrder}
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+              >
+                Отправить заказ
+              </button>
             </div>
           </div>
         </div>
