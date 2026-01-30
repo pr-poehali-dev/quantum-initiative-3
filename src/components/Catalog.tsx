@@ -170,15 +170,38 @@ export function Catalog() {
     setOrderFormOpen(true)
   }
 
-  const submitOrder = () => {
+  const submitOrder = async () => {
     if (!customerName.trim() || !customerPhone.trim()) {
       alert('Пожалуйста, укажите ваше имя и телефон')
       return
     }
     if (!selectedProduct) return
 
-    const message = `Здравствуйте! Хочу заказать №${selectedProduct.index + 1}. ${selectedProduct.name}\n\nКонтакты:\nИмя: ${customerName}\nТелефон: ${customerPhone}`
-    window.open(`https://t.me/${selectedProduct.telegram}?text=${encodeURIComponent(message)}`, '_blank')
+    try {
+      const response = await fetch('https://functions.poehali.dev/46601224-1c9e-4c3e-bcf2-eeab2be771c3', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'create_order',
+          product_index: selectedProduct.index,
+          product_name: selectedProduct.name,
+          customer_name: customerName,
+          customer_phone: customerPhone
+        })
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        alert('✅ ' + result.message)
+      } else {
+        alert('Ошибка при отправке заказа. Попробуйте позже.')
+      }
+    } catch (error) {
+      alert('Ошибка при отправке заказа. Попробуйте позже.')
+    }
     
     setOrderFormOpen(false)
     setCustomerName('')
