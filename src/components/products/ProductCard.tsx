@@ -102,7 +102,7 @@ export function ProductCard({
               <span className="font-medium">{product.price.toLocaleString('ru-RU')} ₽</span>
             )}
             <span className={product.in_stock ? 'text-green-600' : 'text-red-600'}>
-              {product.in_stock ? 'В наличии' : 'Нет в наличии'}
+              {product.in_stock ? 'В наличии' : 'Продано'}
             </span>
             <span className="text-muted-foreground">Порядок: {product.display_order}</span>
           </div>
