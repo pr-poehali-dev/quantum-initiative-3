@@ -217,7 +217,7 @@ export function Catalog() {
                       </div>
                     )}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <h3 className="text-xl md:text-2xl font-medium">№{index + 1}. {product.name}</h3>
                     {product.description && (
                       <p className="text-muted-foreground leading-relaxed">{product.description}</p>
@@ -225,6 +225,16 @@ export function Catalog() {
                     {product.price !== null && (
                       <p className="text-2xl font-medium">{product.price.toLocaleString('ru-RU')} ₽</p>
                     )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const message = `Здравствуйте! Хочу заказать №${index + 1}. ${product.name}`
+                        window.open(`https://t.me/maksimkalabukhov?text=${encodeURIComponent(message)}`, '_blank')
+                      }}
+                      className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                    >
+                      Заказать в Telegram
+                    </button>
                   </div>
                 </div>
               )
