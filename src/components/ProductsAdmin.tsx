@@ -201,13 +201,17 @@ export function ProductsAdmin() {
 
   const startEdit = (product: Product) => {
     setEditingId(product.id);
+    const allPhotos = product.photos || [];
+    if (product.photo_url && !allPhotos.includes(product.photo_url)) {
+      allPhotos.unshift(product.photo_url);
+    }
     setEditForm({
       name: product.name,
       description: product.description,
       price: product.price,
       in_stock: product.in_stock,
       display_order: product.display_order,
-      photos: product.photos || [],
+      photos: allPhotos,
     });
   };
 
