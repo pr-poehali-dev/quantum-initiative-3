@@ -96,20 +96,22 @@ export default function BusinessCard() {
 
         <div className="bg-card border rounded-lg p-8 space-y-6">
           <div 
-            className="aspect-[1.75/1] rounded-lg overflow-hidden relative"
+            className="aspect-[1.75/1] rounded-lg overflow-hidden relative bg-[#3d2817]"
             style={{
               backgroundImage: 'url(https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/files/6eedbe48-4330-4642-877e-f435a3d2d9ca.jpg)',
               backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundPosition: 'center',
+              backgroundColor: '#3d2817'
             }}
           >
             <div className="absolute inset-4 border-4 border-[#d4af37] rounded-lg">
               <div 
-                className="absolute inset-1 p-8 flex items-center justify-between"
+                className="absolute inset-1 p-8 flex items-center justify-between bg-[#3d2817]"
                 style={{
                   backgroundImage: 'url(https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/files/6eedbe48-4330-4642-877e-f435a3d2d9ca.jpg)',
                   backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundPosition: 'center',
+                  backgroundColor: '#3d2817'
                 }}
               >
                 <div className="space-y-4">
