@@ -6,10 +6,11 @@ import { Download } from 'lucide-react';
 export default function BusinessCard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [qrDataUrl, setQrDataUrl] = useState('');
-  const [contacts, setContacts] = useState({
-    phone: '+7 (999) 123-45-67',
-    email: 'info@suvelewood.online',
-    website: 'suvelewood.online'
+  const [contacts] = useState({
+    phone1: '+7 929 309-08-98',
+    phone2: '+7 923 370-88-82',
+    email: 'KAV089824@MAIL.RU',
+    telegram: '@ANDERSONKOV'
   });
 
   useEffect(() => {
@@ -53,19 +54,25 @@ export default function BusinessCard() {
 
       ctx.drawImage(woodImg, 45, 45, 960, 510, 45, 45, 960, 510);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 48px Arial';
-    ctx.fillText('Сувениры ручной работы', 80, 120);
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      logoImg.onload = () => {
+        ctx.drawImage(logoImg, 80, 80, 120, 120);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 36px Arial';
+        ctx.fillText('Natural Masterpieces', 220, 130);
 
-    ctx.fillStyle = '#d4af37';
-    ctx.font = '32px Arial';
-    ctx.fillText('Уникальные изделия от мастеров', 80, 180);
+        ctx.fillStyle = '#d4af37';
+        ctx.font = '24px Arial';
+        ctx.fillText('From Capa and Suvela', 220, 170);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '24px Arial';
-    ctx.fillText('📞 ' + contacts.phone, 80, 260);
-    ctx.fillText('✉️ ' + contacts.email, 80, 310);
-    ctx.fillText('🌐 ' + contacts.website, 80, 360);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '20px Arial';
+        ctx.fillText('📞 ' + contacts.phone1, 80, 260);
+        ctx.fillText('📞 ' + contacts.phone2, 80, 295);
+        ctx.fillText('✉️ ' + contacts.email, 80, 330);
+        ctx.fillText('💬 ' + contacts.telegram, 80, 365);
 
       if (qrDataUrl) {
         const qrImage = new Image();
@@ -85,6 +92,8 @@ export default function BusinessCard() {
         };
         qrImage.src = qrDataUrl;
       }
+      };
+      logoImg.src = 'https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/4954ecf4-452a-4f03-baff-e809ab12201b.png';
     };
     woodImg.src = 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80';
   };
@@ -121,17 +130,23 @@ export default function BusinessCard() {
               >
                 <div className="space-y-4">
                   <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">
-                      Сувениры ручной работы
+                    <img 
+                      src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/4954ecf4-452a-4f03-baff-e809ab12201b.png" 
+                      alt="Natural Masterpieces" 
+                      className="w-32 h-32 mb-3"
+                    />
+                    <h2 className="text-2xl font-bold text-white mb-1">
+                      Natural Masterpieces
                     </h2>
-                    <p className="text-xl text-[#d4af37]">
-                      Уникальные изделия от мастеров
+                    <p className="text-lg text-[#d4af37]">
+                      From Capa and Suvela
                     </p>
                   </div>
-                  <div className="space-y-2 text-white">
-                    <p className="text-base">📞 {contacts.phone}</p>
-                    <p className="text-base">✉️ {contacts.email}</p>
-                    <p className="text-base">🌐 {contacts.website}</p>
+                  <div className="space-y-1 text-white text-sm">
+                    <p>📞 {contacts.phone1}</p>
+                    <p>📞 {contacts.phone2}</p>
+                    <p>✉️ {contacts.email}</p>
+                    <p>💬 {contacts.telegram}</p>
                   </div>
                 </div>
 
