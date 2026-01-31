@@ -81,7 +81,7 @@ export default function BusinessCard() {
         qrImage.src = qrDataUrl;
       }
     };
-    woodImg.src = 'https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/files/6eedbe48-4330-4642-877e-f435a3d2d9ca.jpg';
+    woodImg.src = 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80';
   };
 
   return (
@@ -98,16 +98,20 @@ export default function BusinessCard() {
           <div 
             className="aspect-[1.75/1] rounded-lg overflow-hidden relative"
             style={{
-              background: 'linear-gradient(90deg, #4a3520 0%, #5d4a3a 10%, #4a3520 20%, #3d3021 30%, #4a3520 40%, #5d4a3a 50%, #4a3520 60%, #3d3021 70%, #4a3520 80%, #5d4a3a 90%, #4a3520 100%)',
-              boxShadow: 'inset 0 0 100px rgba(0,0,0,0.3)'
+              backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundColor: '#4a3520'
             }}
           >
             <div className="absolute inset-4 border-4 border-[#d4af37] rounded-lg">
               <div 
                 className="absolute inset-1 p-8 flex items-center justify-between"
                 style={{
-                  background: 'linear-gradient(90deg, #4a3520 0%, #5d4a3a 10%, #4a3520 20%, #3d3021 30%, #4a3520 40%, #5d4a3a 50%, #4a3520 60%, #3d3021 70%, #4a3520 80%, #5d4a3a 90%, #4a3520 100%)',
-                  boxShadow: 'inset 0 0 80px rgba(0,0,0,0.4)'
+                  backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundColor: '#4a3520'
                 }}
               >
                 <div className="space-y-4">
