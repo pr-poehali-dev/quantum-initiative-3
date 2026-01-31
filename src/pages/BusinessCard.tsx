@@ -10,7 +10,7 @@ export default function BusinessCard() {
   useEffect(() => {
     const generateQR = async () => {
       try {
-        const url = window.location.origin;
+        const url = 'https://suvelewood.online';
         const dataUrl = await QRCode.toDataURL(url, {
           width: 200,
           margin: 2,
