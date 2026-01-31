@@ -36,6 +36,7 @@ export function Catalog() {
   const [contactValue, setContactValue] = useState('')
   const [orderComment, setOrderComment] = useState('')
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const [searchNumber, setSearchNumber] = useState('')
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -224,6 +225,11 @@ export function Catalog() {
     setSelectedProduct(null)
   }
 
+  const filteredProducts = products.filter(product => {
+    if (!searchNumber.trim()) return true
+    return product.product_number?.includes(searchNumber.trim())
+  })
+
   if (loading) {
     return (
       <section id="catalog" className="py-32 md:py-40">
@@ -253,13 +259,34 @@ export function Catalog() {
           </h2>
         </div>
 
-        {products.length === 0 ? (
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8 max-w-2xl">
+          <div className="flex items-center gap-2 flex-1">
+            <Icon name="Search" size={20} className="text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Поиск по номеру изделия"
+              value={searchNumber}
+              onChange={(e) => setSearchNumber(e.target.value)}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+            />
+          </div>
+          {searchNumber && (
+            <button
+              onClick={() => setSearchNumber('')}
+              className="px-4 py-2 text-sm bg-secondary rounded-lg hover:bg-secondary/80 transition-colors"
+            >
+              Очистить
+            </button>
+          )}
+        </div>
+
+        {filteredProducts.length === 0 ? (
           <p className="text-center text-muted-foreground text-lg">
-            В данный момент нет товаров в наличии
+            {searchNumber ? 'Изделия с таким номером не найдены' : 'В данный момент нет товаров в наличии'}
           </p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-            {products.map((product, index) => {
+            {filteredProducts.map((product, index) => {
               const imageUrl = getProductImage(product)
               return (
                 <div
