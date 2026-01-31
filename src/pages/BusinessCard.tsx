@@ -6,6 +6,11 @@ import { Download } from 'lucide-react';
 export default function BusinessCard() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [qrDataUrl, setQrDataUrl] = useState('');
+  const [contacts, setContacts] = useState({
+    phone: '+7 (999) 123-45-67',
+    email: 'info@suvelewood.online',
+    website: 'suvelewood.online'
+  });
 
   useEffect(() => {
     const generateQR = async () => {
@@ -58,9 +63,9 @@ export default function BusinessCard() {
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
-    ctx.fillText('📍 Наш каталог:', 80, 260);
-    ctx.fillText('📱 Смотрите все товары онлайн', 80, 310);
-    ctx.fillText('✨ Более 100 уникальных изделий', 80, 360);
+    ctx.fillText('📞 ' + contacts.phone, 80, 260);
+    ctx.fillText('✉️ ' + contacts.email, 80, 310);
+    ctx.fillText('🌐 ' + contacts.website, 80, 360);
 
       if (qrDataUrl) {
         const qrImage = new Image();
@@ -124,9 +129,9 @@ export default function BusinessCard() {
                     </p>
                   </div>
                   <div className="space-y-2 text-white">
-                    <p className="text-lg">📍 Наш каталог:</p>
-                    <p className="text-base">📱 Смотрите все товары онлайн</p>
-                    <p className="text-base">✨ Более 100 уникальных изделий</p>
+                    <p className="text-base">📞 {contacts.phone}</p>
+                    <p className="text-base">✉️ {contacts.email}</p>
+                    <p className="text-base">🌐 {contacts.website}</p>
                   </div>
                 </div>
 
