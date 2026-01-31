@@ -33,6 +33,7 @@ export function ProductsAdmin() {
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [searchNumber, setSearchNumber] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -351,6 +352,11 @@ export function ProductsAdmin() {
     return <div className="text-center py-8">Загрузка...</div>;
   }
 
+  const filteredProducts = products.filter(product => {
+    if (!searchNumber.trim()) return true;
+    return product.product_number?.includes(searchNumber.trim());
+  });
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -375,6 +381,25 @@ export function ProductsAdmin() {
         </div>
       </div>
 
+      <div className="flex items-center gap-3">
+        <label className="text-sm font-medium">Поиск по номеру:</label>
+        <input
+          type="text"
+          placeholder="Введите номер изделия"
+          value={searchNumber}
+          onChange={(e) => setSearchNumber(e.target.value)}
+          className="flex-1 max-w-xs px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        {searchNumber && (
+          <button
+            onClick={() => setSearchNumber('')}
+            className="px-3 py-2 text-sm bg-secondary rounded-md hover:bg-secondary/80"
+          >
+            Очистить
+          </button>
+        )}
+      </div>
+
       {showAddForm && (
         <AddProductForm
           newProduct={newProduct}
@@ -386,7 +411,12 @@ export function ProductsAdmin() {
       )}
 
       <div className="grid gap-4">
-        {products.map((product, index) => (
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            {searchNumber ? 'Изделия с таким номером не найдены' : 'Нет товаров'}
+          </div>
+        ) : (
+          filteredProducts.map((product, index) => (
           <div key={product.id}>
             {editingId === product.id ? (
               <div className="bg-card p-6 rounded-lg border">
@@ -413,7 +443,8 @@ export function ProductsAdmin() {
               />
             )}
           </div>
-        ))}
+          ))
+        )}
       </div>
 
       {zoomedImage && (
