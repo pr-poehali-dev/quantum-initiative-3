@@ -98,20 +98,20 @@ export default function BusinessCard() {
           <div 
             className="aspect-[1.75/1] rounded-lg overflow-hidden relative"
             style={{
-              backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80)',
+              backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80&v=2)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              backgroundColor: '#4a3520'
+              backgroundColor: '#654321'
             }}
           >
-            <div className="absolute inset-4 border-4 border-[#d4af37] rounded-lg">
+            <div className="absolute inset-4 border-4 border-[#d4af37] rounded-lg" style={{ backgroundColor: 'rgba(0,0,0,0.1)' }}>
               <div 
                 className="absolute inset-1 p-8 flex items-center justify-between"
                 style={{
-                  backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80)',
+                  backgroundImage: 'url(https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80&v=2)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  backgroundColor: '#4a3520'
+                  backgroundColor: '#654321'
                 }}
               >
                 <div className="space-y-4">
