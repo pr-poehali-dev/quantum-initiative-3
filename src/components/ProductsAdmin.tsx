@@ -354,7 +354,7 @@ export function ProductsAdmin() {
 
   const filteredProducts = products.filter(product => {
     if (!searchNumber.trim()) return true;
-    return product.product_number?.includes(searchNumber.trim());
+    return product.product_number === searchNumber.trim();
   });
 
   return (
