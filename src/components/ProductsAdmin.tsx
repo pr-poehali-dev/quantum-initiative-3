@@ -81,28 +81,7 @@ export function ProductsAdmin() {
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            reject(new Error('Canvas context not available'));
-            return;
-          }
-          
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Добавляем водяной знак
-          const fontSize = Math.max(width * 0.03, 16);
-          ctx.font = `${fontSize}px Arial`;
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-          ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-          ctx.lineWidth = 2;
-          
-          const text = 'Вазы Шамота';
-          const padding = width * 0.02;
-          const textMetrics = ctx.measureText(text);
-          const x = width - textMetrics.width - padding;
-          const y = height - padding;
-          
-          ctx.strokeText(text, x, y);
-          ctx.fillText(text, x, y);
+          ctx?.drawImage(img, 0, 0, width, height);
           
           resolve(canvas.toDataURL('image/jpeg', 0.85));
         };
