@@ -23,6 +23,7 @@ export function Catalog() {
   const [loading, setLoading] = useState(true)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -55,6 +56,7 @@ export function Catalog() {
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index)
+    setCurrentPhotoIndex(0)
     setLightboxOpen(true)
     setZoom(1)
     setPosition({ x: 0, y: 0 })
@@ -62,18 +64,32 @@ export function Catalog() {
 
   const closeLightbox = () => {
     setLightboxOpen(false)
+    setCurrentPhotoIndex(0)
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
 
   const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % products.length)
+    const currentPhotos = getAllProductPhotos(products[currentIndex])
+    if (currentPhotoIndex < currentPhotos.length - 1) {
+      setCurrentPhotoIndex(prev => prev + 1)
+    } else {
+      setCurrentIndex((prev) => (prev + 1) % products.length)
+      setCurrentPhotoIndex(0)
+    }
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
 
   const prevImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + products.length) % products.length)
+    if (currentPhotoIndex > 0) {
+      setCurrentPhotoIndex(prev => prev - 1)
+    } else {
+      const newIndex = (currentIndex - 1 + products.length) % products.length
+      const prevPhotos = getAllProductPhotos(products[newIndex])
+      setCurrentIndex(newIndex)
+      setCurrentPhotoIndex(prevPhotos.length - 1)
+    }
     setZoom(1)
     setPosition({ x: 0, y: 0 })
   }
@@ -169,6 +185,14 @@ export function Catalog() {
   const getProductImage = (product: Product) => {
     if (product.photos && product.photos.length > 0) return product.photos[0]
     return product.photo_url || ''
+  }
+
+  const getAllProductPhotos = (product: Product): string[] => {
+    const photos = [...(product.photos || [])]
+    if (product.photo_url && !photos.includes(product.photo_url)) {
+      photos.unshift(product.photo_url)
+    }
+    return photos.filter(p => p)
   }
 
   const handleOrderClick = (index: number, name: string, telegram: string, productNumber?: string) => {
@@ -294,13 +318,25 @@ export function Catalog() {
                   className="group cursor-pointer"
                   onClick={() => openLightbox(index)}
                 >
-                  <div className="aspect-[3/4] overflow-hidden bg-background mb-6">
+                  <div className="aspect-[3/4] overflow-hidden bg-background mb-6 relative">
                     {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      <>
+                        <img
+                          src={imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        {getAllProductPhotos(product).length > 1 && (
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 backdrop-blur-sm px-3 py-2 rounded-full">
+                            {getAllProductPhotos(product).map((_, photoIndex) => (
+                              <div
+                                key={photoIndex}
+                                className="w-2 h-2 rounded-full bg-white/60"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <p className="text-muted-foreground">Фото товара</p>
@@ -394,7 +430,7 @@ export function Catalog() {
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/10 px-4 py-2 rounded-lg z-50">
             <p className="text-white text-sm">
-              {currentIndex + 1} / {products.length}
+              Товар {currentIndex + 1} / {products.length} • Фото {currentPhotoIndex + 1} / {getAllProductPhotos(products[currentIndex]).length}
             </p>
           </div>
 
@@ -413,8 +449,8 @@ export function Catalog() {
               style={{ cursor: zoom > 1 ? 'move' : 'zoom-in' }}
             >
               <img
-                src={getProductImage(products[currentIndex])}
-                alt={products[currentIndex].name}
+                src={getAllProductPhotos(products[currentIndex])[currentPhotoIndex]}
+                alt={`${products[currentIndex].name} - фото ${currentPhotoIndex + 1}`}
                 className="max-w-full max-h-[70vh] object-contain select-none"
                 style={{
                   transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
