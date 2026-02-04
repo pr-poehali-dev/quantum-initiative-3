@@ -40,9 +40,6 @@ def handler(event: dict, context) -> dict:
         elif method == 'PUT':
             body = json.loads(event.get('body', '{}'))
             master_id = body.get('id')
-            name = body.get('name')
-            description = body.get('description')
-            photo_url = body.get('photo_url')
 
             if not master_id:
                 return {
@@ -52,10 +49,34 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
 
-            cur.execute(
-                'UPDATE masters SET name = %s, description = %s, photo_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s',
-                (name, description, photo_url, master_id)
-            )
+            update_fields = []
+            update_values = []
+            
+            if 'name' in body:
+                update_fields.append('name = %s')
+                update_values.append(body['name'])
+            
+            if 'description' in body:
+                update_fields.append('description = %s')
+                update_values.append(body['description'])
+            
+            if 'photo_url' in body:
+                update_fields.append('photo_url = %s')
+                update_values.append(body['photo_url'])
+            
+            if not update_fields:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'No fields to update'}),
+                    'isBase64Encoded': False
+                }
+            
+            update_fields.append('updated_at = CURRENT_TIMESTAMP')
+            update_values.append(master_id)
+            
+            query = f"UPDATE masters SET {', '.join(update_fields)} WHERE id = %s"
+            cur.execute(query, update_values)
             conn.commit()
 
             return {
