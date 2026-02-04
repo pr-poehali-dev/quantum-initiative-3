@@ -28,6 +28,7 @@ export function Catalog() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [cardPhotoIndexes, setCardPhotoIndexes] = useState<{ [key: number]: number }>({})
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [orderFormOpen, setOrderFormOpen] = useState(false)
@@ -322,19 +323,53 @@ export function Catalog() {
                     {imageUrl ? (
                       <>
                         <img
-                          src={imageUrl}
+                          src={getAllProductPhotos(product)[cardPhotoIndexes[product.id] || 0] || imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                         {getAllProductPhotos(product).length > 1 && (
-                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 backdrop-blur-sm px-3 py-2 rounded-full">
-                            {getAllProductPhotos(product).map((_, photoIndex) => (
-                              <div
-                                key={photoIndex}
-                                className="w-2 h-2 rounded-full bg-white/60"
-                              />
-                            ))}
-                          </div>
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const photos = getAllProductPhotos(product)
+                                const currentIdx = cardPhotoIndexes[product.id] || 0
+                                setCardPhotoIndexes(prev => ({
+                                  ...prev,
+                                  [product.id]: currentIdx > 0 ? currentIdx - 1 : photos.length - 1
+                                }))
+                              }}
+                              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors z-10"
+                            >
+                              <Icon name="ChevronLeft" size={20} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const photos = getAllProductPhotos(product)
+                                const currentIdx = cardPhotoIndexes[product.id] || 0
+                                setCardPhotoIndexes(prev => ({
+                                  ...prev,
+                                  [product.id]: currentIdx < photos.length - 1 ? currentIdx + 1 : 0
+                                }))
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors z-10"
+                            >
+                              <Icon name="ChevronRight" size={20} />
+                            </button>
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 backdrop-blur-sm px-3 py-2 rounded-full">
+                              {getAllProductPhotos(product).map((_, photoIndex) => (
+                                <div
+                                  key={photoIndex}
+                                  className={`w-2 h-2 rounded-full transition-colors ${
+                                    photoIndex === (cardPhotoIndexes[product.id] || 0)
+                                      ? 'bg-white'
+                                      : 'bg-white/40'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </>
                         )}
                       </>
                     ) : (
