@@ -635,13 +635,15 @@ export function Catalog() {
                 />
                 <label htmlFor="privacy-checkbox" className="text-sm text-muted-foreground cursor-pointer">
                   Я согласен с{' '}
-                  <Link 
-                    to="/privacy" 
+                  <a 
+                    href="/privacy" 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-primary hover:underline"
                     onClick={(e) => e.stopPropagation()}
                   >
                     политикой конфиденциальности
-                  </Link>
+                  </a>
                   {' '}и даю согласие на обработку персональных данных
                 </label>
               </div>
