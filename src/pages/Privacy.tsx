@@ -1,17 +1,27 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 
 const Privacy = () => {
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <Link 
-          to="/" 
+        <button
+          onClick={handleBack}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
         >
           <Icon name="ArrowLeft" size={20} />
-          <span>Вернуться на главную</span>
-        </Link>
+          <span>Назад</span>
+        </button>
 
         <div className="bg-card rounded-2xl p-8 md:p-12 shadow-lg">
           <h1 className="text-4xl font-bold mb-8">Политика конфиденциальности</h1>

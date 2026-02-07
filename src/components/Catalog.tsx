@@ -620,7 +620,7 @@ export function Catalog() {
                   value={orderComment}
                   onChange={(e) => setOrderComment(e.target.value)}
                   placeholder="Пожелания по доставке, вопросы или другие детали..."
-                  rows={3}
+                  rows={2}
                   className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 />
               </div>
