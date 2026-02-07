@@ -631,7 +631,7 @@ export function Catalog() {
                   id="privacy-checkbox"
                   checked={privacyAccepted}
                   onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                  className="mt-1 w-4 h-4 accent-primary cursor-pointer"
+                  className="mt-1 w-5 h-5 md:w-4 md:h-4 accent-primary cursor-pointer flex-shrink-0"
                 />
                 <label htmlFor="privacy-checkbox" className="text-sm text-muted-foreground cursor-pointer">
                   Я согласен с{' '}
