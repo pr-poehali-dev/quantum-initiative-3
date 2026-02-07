@@ -513,15 +513,15 @@ export function Catalog() {
 
       {orderFormOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
           onClick={() => setOrderFormOpen(false)}
         >
           <div
-            className="bg-background rounded-lg p-8 max-w-md w-full"
+            className="bg-background rounded-lg p-6 max-w-md w-full my-8 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-medium">Оформление заказа</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-medium">Оформление заказа</h3>
               <button
                 onClick={() => setOrderFormOpen(false)}
                 className="text-muted-foreground hover:text-foreground"
@@ -531,12 +531,12 @@ export function Catalog() {
             </div>
 
             {selectedProduct && (
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-4 text-sm">
                 {selectedProduct.productNumber ? `№${selectedProduct.productNumber}` : `№${selectedProduct.index + 1}`}. {selectedProduct.name}
               </p>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium mb-2">Ваше имя</label>
                 <input
@@ -544,7 +544,7 @@ export function Catalog() {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Иван"
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 />
               </div>
 
@@ -610,7 +610,7 @@ export function Catalog() {
                     contactMethod === 'email' ? 'example@mail.ru' :
                     'VK, WhatsApp, другой способ связи'
                   }
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-sm"
                 />
               </div>
 
@@ -621,7 +621,7 @@ export function Catalog() {
                   onChange={(e) => setOrderComment(e.target.value)}
                   placeholder="Пожелания по доставке, вопросы или другие детали..."
                   rows={2}
-                  className="w-full px-4 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
                 />
               </div>
 
