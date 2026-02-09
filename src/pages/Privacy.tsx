@@ -5,10 +5,11 @@ const Privacy = () => {
   const navigate = useNavigate();
   
   const handleBack = () => {
-    window.close();
-    setTimeout(() => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
       navigate('/');
-    }, 100);
+    }
   };
   
   return (
@@ -19,7 +20,8 @@ const Privacy = () => {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
         >
           <Icon name="ArrowLeft" size={20} />
-          <span>Закрыть</span>
+          <span className="hidden sm:inline">Вернуться на главную</span>
+          <span className="sm:hidden">Назад</span>
         </button>
 
         <div className="bg-card rounded-2xl p-8 md:p-12 shadow-lg">
