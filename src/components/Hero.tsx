@@ -21,7 +21,7 @@ export function Hero() {
             <span className="text-orange-200">{"в каждом изделии"}</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/70 tracking-widest uppercase mb-10">{"Интерьер начинается с деталей"}</p>
+          <p className="text-lg md:text-xl text-white tracking-widest uppercase mb-10">{"Интерьер начинается с деталей"}</p>
 
           <a
             href="#catalog"
