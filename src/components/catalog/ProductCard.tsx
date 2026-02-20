@@ -38,7 +38,12 @@ export function ProductCard({
   const hasMultiplePhotos = photos.length > 1
 
   return (
-    <div className="bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+    <div className={`bg-card rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow relative ${!product.in_stock ? 'opacity-70' : ''}`}>
+      {!product.in_stock && (
+        <div className="absolute top-3 left-3 z-20 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+          Продано
+        </div>
+      )}
       <div
         className="relative aspect-[4/3] bg-muted cursor-pointer overflow-hidden group"
         onClick={() => onImageClick(index)}
@@ -101,15 +106,21 @@ export function ProductCard({
         {product.price !== null && (
           <p className="text-2xl font-medium">{product.price.toLocaleString('ru-RU')} ₽</p>
         )}
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onOrderClick(index, product.name, 'ANDERSONKOV', product.product_number)
-          }}
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
-        >
-          Заказать
-        </button>
+        {product.in_stock ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onOrderClick(index, product.name, 'ANDERSONKOV', product.product_number)
+            }}
+            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+          >
+            Заказать
+          </button>
+        ) : (
+          <div className="w-full px-6 py-3 bg-muted text-muted-foreground rounded-md text-center font-medium">
+            Продано
+          </div>
+        )}
       </div>
     </div>
   )

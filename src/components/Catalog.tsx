@@ -42,7 +42,7 @@ export function Catalog() {
       try {
         const response = await fetch(PRODUCTS_API)
         const data = await response.json()
-        setProducts(Array.isArray(data) ? data.filter(p => p.in_stock) : [])
+        setProducts(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error('Failed to load products:', error)
       } finally {
