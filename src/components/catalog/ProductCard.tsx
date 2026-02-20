@@ -106,7 +106,7 @@ export function ProductCard({
         {product.price !== null && (
           <p className="text-2xl font-medium">{product.price.toLocaleString('ru-RU')} ₽</p>
         )}
-        {product.in_stock ? (
+        {product.in_stock || product.name?.toLowerCase().includes('доска') ? (
           <button
             onClick={(e) => {
               e.stopPropagation()
