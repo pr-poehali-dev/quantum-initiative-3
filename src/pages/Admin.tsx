@@ -122,6 +122,10 @@ export default function Admin() {
           onEditFormChange={setEditForm}
         />
 
+        <div className="mt-8" id="catalog-top">
+          <ProductsAdmin />
+        </div>
+
         <div className="mt-8">
           <MastersManager
             masters={masters}
