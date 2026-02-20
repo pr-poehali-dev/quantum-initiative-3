@@ -21,7 +21,14 @@ export function Hero() {
             <span className="text-orange-200">{"в каждом изделии"}</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/70 tracking-widest uppercase">{"Интерьер начинается с деталей"}</p>
+          <p className="text-lg md:text-xl text-white/70 tracking-widest uppercase mb-10">{"Интерьер начинается с деталей"}</p>
+
+          <a
+            href="#catalog"
+            className="inline-block px-10 py-4 border border-white/60 text-white text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300"
+          >
+            Смотреть каталог
+          </a>
         </div>
       </div>
     </section>
