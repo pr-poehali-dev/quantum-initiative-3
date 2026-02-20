@@ -15,11 +15,13 @@ export function Hero() {
         <div className="text-center w-full">
           <p className="text-sm tracking-[0.3em] uppercase text-white/80 mb-6">{"Студия декора из дерева"}</p>
 
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-medium text-balance text-center text-white mb-8 tracking-tight leading-[0.95]">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-medium text-balance text-center text-white mb-6 tracking-tight leading-[0.95]">
             {"Тепло дерева"}
             <br />
             <span className="text-orange-200">{"в каждом изделии"}</span>
           </h1>
+
+          <p className="text-lg md:text-xl text-white/70 tracking-widest uppercase">{"Интерьер начинается с деталей"}</p>
         </div>
       </div>
     </section>
