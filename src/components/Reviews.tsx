@@ -30,7 +30,10 @@ export function Reviews() {
   useEffect(() => {
     fetch(REVIEWS_API)
       .then((r) => r.json())
-      .then((data) => setReviews(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const parsed = typeof data === "string" ? JSON.parse(data) : data
+        setReviews(Array.isArray(parsed) ? parsed : [])
+      })
       .catch(() => setReviews([]))
   }, [])
 

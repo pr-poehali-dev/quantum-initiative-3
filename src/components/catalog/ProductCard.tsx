@@ -96,7 +96,7 @@ export function ProductCard({
           </div>
         )}
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3 p-4">
         <h3 className="text-xl md:text-2xl font-medium">
           {product.product_number ? `№${product.product_number}` : `№${index + 1}`}. {product.name}
         </h3>

@@ -23,7 +23,10 @@ export function ReviewsAdmin() {
     setLoading(true)
     fetch(`${REVIEWS_API}?admin=1`)
       .then((r) => r.json())
-      .then((data) => setReviews(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const parsed = typeof data === "string" ? JSON.parse(data) : data
+        setReviews(Array.isArray(parsed) ? parsed : [])
+      })
       .finally(() => setLoading(false))
   }
 
