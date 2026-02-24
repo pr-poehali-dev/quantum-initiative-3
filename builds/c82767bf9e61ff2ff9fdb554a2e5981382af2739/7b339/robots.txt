@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Основные поисковики
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Социальные сети
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+# Sitemap
+Sitemap: https://suvelewood.online/sitemap.xml
+
+# Хост
+Host: https://suvelewood.online
