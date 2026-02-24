@@ -5,6 +5,7 @@ import { LoginForm } from '@/components/admin/LoginForm';
 import { FileUploader } from '@/components/admin/FileUploader';
 import { MediaGallery } from '@/components/admin/MediaGallery';
 import { MastersManager } from '@/components/admin/MastersManager';
+import { ReviewsAdmin } from '@/components/admin/ReviewsAdmin';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useMediaManagement } from '@/hooks/useMediaManagement';
 import { useMastersManagement } from '@/hooks/useMastersManagement';
@@ -143,6 +144,8 @@ export default function Admin() {
         <div className="mt-8" id="catalog">
           <ProductsAdmin />
         </div>
+
+        <ReviewsAdmin />
       </div>
     </div>
   );

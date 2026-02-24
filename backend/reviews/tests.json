@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "GET published reviews",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "POST new review",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "Тест Тестов", "city": "Красноярск", "product_number": "К9", "product_name": "Доска разделочная", "rating": 5, "text": "Отличное изделие!"},
+      "expectedStatus": 201,
+      "bodyMatcher": "partial"
+    }
+  ]
+}
