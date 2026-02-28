@@ -1,6 +1,6 @@
 export function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-end justify-center overflow-hidden" style={{ background: "#6b3a0f" }}>
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: "#6b3a0f" }}>
       {/* Background pattern */}
       <div
         className="absolute inset-0 z-0"
@@ -19,7 +19,7 @@ export function Hero() {
       />
 
       {/* Bottom content */}
-      <div className="relative z-10 w-full text-center pb-12 px-6 flex flex-col items-center justify-center" style={{ minHeight: '120px' }}>
+      <div className="relative z-10 w-full text-center px-6 flex flex-col items-center justify-center" style={{ position: 'absolute', bottom: '48px', left: 0, right: 0 }}>
         <p className="text-white tracking-[0.25em] uppercase text-sm md:text-base mb-6 font-light">
           Интерьер начинается с деталей
         </p>
