@@ -19,13 +19,13 @@ export function Hero() {
       />
 
       {/* Bottom content */}
-      <div className="relative z-10 w-full text-center pb-12 px-6">
-        <p className="text-white/90 tracking-[0.25em] uppercase text-sm md:text-base mb-6 font-light">
+      <div className="relative z-10 w-full text-center pb-12 px-6 flex flex-col items-center justify-center" style={{ minHeight: '120px' }}>
+        <p className="text-white tracking-[0.25em] uppercase text-sm md:text-base mb-6 font-light">
           Интерьер начинается с деталей
         </p>
         <a
           href="#catalog"
-          className="inline-block px-10 py-4 border border-white/70 text-white text-sm tracking-widest uppercase hover:bg-white hover:text-[#8a5510] transition-all duration-300"
+          className="inline-block px-10 py-4 border border-white text-white text-sm tracking-widest uppercase hover:bg-white hover:text-[#8a5510] transition-all duration-300"
         >
           Смотреть каталог
         </a>
