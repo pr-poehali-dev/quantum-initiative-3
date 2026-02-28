@@ -1,6 +1,6 @@
 export function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-end justify-center overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 30%, #e8b84a 0%, #c49020 40%, #8a5f0a 80%, #5a3a05 100%)" }}>
+    <section id="hero" className="relative min-h-screen flex items-end justify-center overflow-hidden" style={{ background: "#d4a832" }}>
       {/* Image contained — nothing cropped, letters visible */}
       <img
         src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/17fdaeff-2d44-4a72-a4b1-752e753651e8.png"
