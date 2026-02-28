@@ -1,35 +1,68 @@
 export function Hero() {
-
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50 z-10" />
-        <img
-          src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/daffdc58-392b-4689-8100-a42e99c34024.jpeg"
-          alt="Деревянные изделия ручной работы"
-          className="w-full h-full object-cover object-center"
-        />
-      </div>
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#c8a84b]">
+      {/* Gold gradient background */}
+      <div className="absolute inset-0 z-0" style={{
+        background: "radial-gradient(ellipse at 30% 20%, #f0d060 0%, #c8a030 40%, #a07018 75%, #6a4a10 100%)"
+      }} />
 
-      <div className="container mx-auto px-6 md:px-12 relative z-20 flex items-center min-h-screen">
-        <div className="text-center w-full">
-          <p className="text-sm tracking-[0.3em] uppercase text-white/80 mb-6">{"Студия декора из дерева"}</p>
+      {/* Subtle sheen overlay */}
+      <div className="absolute inset-0 z-0 opacity-40" style={{
+        background: "radial-gradient(ellipse at 70% 30%, rgba(255,255,200,0.5) 0%, transparent 60%)"
+      }} />
 
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-medium text-balance text-center text-white mb-6 tracking-tight leading-[0.95]">
-            {"Тепло дерева"}
-            <br />
-            <span className="text-orange-200">{"в каждом изделии"}</span>
-          </h1>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen w-full px-6 text-center">
 
-          <p className="text-lg md:text-xl text-white tracking-widest uppercase mb-10">{"Интерьер начинается с деталей"}</p>
-
-          <a
-            href="#catalog"
-            className="inline-block px-10 py-4 border border-white/60 text-white text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-all duration-300"
-          >
-            Смотреть каталог
-          </a>
+        {/* Logo letters */}
+        <div className="mb-2">
+          <span className="font-heading" style={{
+            fontSize: "clamp(100px, 22vw, 220px)",
+            lineHeight: 0.85,
+            letterSpacing: "0.05em",
+            color: "transparent",
+            WebkitTextStroke: "2px rgba(180,120,40,0.7)",
+            textShadow: "2px 4px 16px rgba(100,60,0,0.3)",
+            background: "linear-gradient(160deg, #f5e090 10%, #c88030 50%, #8a5510 90%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            display: "block",
+            fontStyle: "italic",
+          }}>КИС</span>
         </div>
+
+        {/* Divider line */}
+        <div className="w-48 h-px bg-white/80 mb-4" />
+
+        {/* Subtitle */}
+        <p className="text-white tracking-[0.4em] uppercase text-sm md:text-base mb-1 font-light">
+          кап и сувель
+        </p>
+        <p className="text-white/80 tracking-[0.3em] uppercase text-xs md:text-sm mb-6 font-light">
+          дары природы
+        </p>
+
+        {/* Product image */}
+        <div className="mb-8 w-full max-w-sm md:max-w-md">
+          <img
+            src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/17fdaeff-2d44-4a72-a4b1-752e753651e8.png"
+            alt="Изделие из капа"
+            className="w-full object-contain drop-shadow-2xl"
+            style={{ maxHeight: "340px" }}
+          />
+        </div>
+
+        {/* Tagline */}
+        <p className="text-white/90 tracking-[0.25em] uppercase text-sm md:text-base mb-8 font-light">
+          Интерьер начинается с деталей
+        </p>
+
+        {/* CTA */}
+        <a
+          href="#catalog"
+          className="inline-block px-10 py-4 border border-white/70 text-white text-sm tracking-widest uppercase hover:bg-white hover:text-[#8a5510] transition-all duration-300"
+        >
+          Смотреть каталог
+        </a>
       </div>
     </section>
   )
