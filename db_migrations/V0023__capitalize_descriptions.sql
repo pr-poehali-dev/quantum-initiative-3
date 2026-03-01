@@ -1,0 +1,1 @@
+UPDATE products SET description = upper(substring(trim(description), 1, 1)) || substring(trim(description), 2) WHERE description IS NOT NULL AND description != '' AND upper(substring(trim(description), 1, 1)) != substring(trim(description), 1, 1)
