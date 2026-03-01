@@ -71,6 +71,9 @@ export function ProductCard({
               <h3 className="text-xl font-bold">
                 {product.product_number ? `№${product.product_number}` : `№${index + 1}`}. {product.name}
               </h3>
+              {product.dimensions && (
+                <p className="text-sm text-muted-foreground mt-0.5">{product.dimensions}</p>
+              )}
               {product.description && (
                 <p className="text-muted-foreground mt-1">{product.description}</p>
               )}
