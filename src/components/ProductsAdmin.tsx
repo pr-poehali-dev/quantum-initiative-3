@@ -227,6 +227,7 @@ export function ProductsAdmin() {
       in_stock: product.in_stock,
       display_order: product.display_order,
       product_number: product.product_number || '',
+      dimensions: product.dimensions || '',
       photos: allPhotos,
     });
   };

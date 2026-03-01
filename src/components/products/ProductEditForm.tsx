@@ -5,6 +5,7 @@ interface Product {
   in_stock?: boolean;
   display_order?: number;
   product_number?: string;
+  dimensions?: string | null;
 }
 
 interface ProductEditFormProps {
@@ -60,6 +61,17 @@ export function ProductEditForm({
             className="w-full px-4 py-2 border rounded-md"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-2">Размеры</label>
+        <input
+          type="text"
+          value={editForm.dimensions || ''}
+          onChange={(e) => onFormChange({ ...editForm, dimensions: e.target.value || null })}
+          className="w-full px-4 py-2 border rounded-md"
+          placeholder="например: 250*180*170 мм"
+        />
       </div>
 
       <div>

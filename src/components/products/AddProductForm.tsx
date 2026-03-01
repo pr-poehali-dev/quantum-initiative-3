@@ -5,6 +5,7 @@ interface Product {
   in_stock?: boolean;
   display_order?: number;
   product_number?: string;
+  dimensions?: string | null;
   photo_base64?: string;
 }
 
@@ -51,6 +52,17 @@ export function AddProductForm({
             placeholder="Деревянная шкатулка"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-2">Размеры</label>
+        <input
+          type="text"
+          value={newProduct.dimensions || ''}
+          onChange={(e) => onFormChange({ ...newProduct, dimensions: e.target.value || null })}
+          className="w-full px-4 py-2 border rounded-md"
+          placeholder="например: 250*180*170 мм"
+        />
       </div>
 
       <div>
