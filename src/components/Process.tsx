@@ -25,7 +25,7 @@ export function Process() {
             От&nbsp;природы к&nbsp;искусству
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            История создания вазы из&nbsp;капа — от&nbsp;дерева в&nbsp;лесу до&nbsp;готового шедевра
+            История создания вазы из&nbsp;капа — от&nbsp;дерева в&nbsp;лесу<br />до&nbsp;готового шедевра
           </p>
         </div>
 
