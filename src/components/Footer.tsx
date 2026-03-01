@@ -11,7 +11,7 @@ export function Footer() {
               <img src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/9f79e38c-7906-48ed-bc3f-8d89d21c19af.png" alt="Natural Masterpieces" className="w-auto h-20" />
             </a>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
-              Создаем уникальные деревянные изделия ручной работы. Тепло природы в каждом предмете.
+              Создаем уникальные деревянные изделия ручной работы. Тепло природы в\u00A0каждом предмете.
             </p>
           </div>
 

@@ -15,7 +15,7 @@ export function CallToAction() {
           </h2>
 
           <p className="text-primary-foreground/70 text-lg md:text-xl leading-relaxed mb-12 max-w-2xl mx-auto">
-            Давайте обсудим, как воплотить вашу идею в жизнь. Каждое уникальное изделие начинается с разговора.
+            Давайте обсудим, как воплотить вашу идею в\u00A0жизнь. Каждое уникальное изделие начинается с\u00A0разговора.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

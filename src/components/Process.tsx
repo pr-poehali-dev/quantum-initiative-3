@@ -1,18 +1,18 @@
 export function Process() {
   const steps = [
     {
-      title: "Поиск капа в лесу",
-      description: "Каждое изделие начинается с поиска уникального капа. Это редкое природное образование с неповторимым рисунком.",
+      title: "Поиск капа в\u00A0лесу",
+      description: "Каждое изделие начинается с\u00A0поиска уникального капа. Это редкое природное образование с\u00A0неповторимым рисунком.",
       image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/e8b9d191-1f76-417c-b881-6c28625424c9.jpg"
     },
     {
       title: "Обработка заготовки",
-      description: "Срезанный кап проходит первичную обработку. Удаляется кора, заготовка высушивается и готовится к работе.",
+      description: "Срезанный кап проходит первичную обработку. Удаляется кора, заготовка высушивается и\u00A0готовится к\u00A0работе.",
       image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/810e8573-9923-4649-a9b5-bcdcf02f3dfd.jpg"
     },
     {
       title: "Готовое изделие",
-      description: "Ручная обработка подручными инструментами, шлифовка и покрытие маслом превращают заготовку в уникальную вазу. Каждый узор — дар природы.",
+      description: "Ручная обработка подручными инструментами, шлифовка и\u00A0покрытие маслом превращают заготовку в\u00A0уникальную вазу. Каждый узор — дар природы.",
       image: "https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/4e3f05c9-da0e-4bec-b1ba-6ba2f8b69419.jpg"
     }
   ];
@@ -22,10 +22,10 @@ export function Process() {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            От природы к искусству
+            От\u00A0природы к\u00A0искусству
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            История создания вазы из капа — от дерева в лесу до готового шедевра
+            История создания вазы из\u00A0капа — от\u00A0дерева в\u00A0лесу до\u00A0готового шедевра
           </p>
         </div>
 
