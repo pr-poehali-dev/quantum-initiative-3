@@ -77,9 +77,9 @@ export function Philosophy() {
           <div className="lg:sticky lg:top-32 lg:self-start">
             <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6">Наша философия</p>
             <h2 className="text-6xl md:text-6xl font-medium leading-[1.15] tracking-tight mb-6 text-balance lg:text-8xl">
-              Ремесло с
+              Ремесло
               <br />
-              <HighlightedText>душой</HighlightedText>
+              с <HighlightedText>душой</HighlightedText>
             </h2>
 
             <div className="relative mt-8 lg:mt-0">
