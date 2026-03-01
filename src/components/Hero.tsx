@@ -25,7 +25,7 @@ export function Hero() {
       />
 
       {/* Bottom content */}
-      <div className="absolute bottom-10 left-0 right-0 z-[3] text-center px-6 flex flex-col items-center">
+      <div className="absolute bottom-10 md:bottom-10 left-0 right-0 z-[3] text-center px-6 flex flex-col items-center" style={{ bottom: 'clamp(3rem, 8vh, 5rem)' }}>
         <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-light">
           Интерьер начинается с деталей
         </p>
