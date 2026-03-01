@@ -10,6 +10,7 @@ interface Product {
   in_stock: boolean;
   display_order: number;
   product_number?: string;
+  dimensions?: string | null;
 }
 
 interface ProductCardProps {

@@ -1,0 +1,1 @@
+UPDATE products SET name = initcap(trim(regexp_replace(regexp_replace(regexp_replace(name, '[.,]?\s*[Рр]азмер\s*.*$', '', ''), '\s*\d[\d\s*xхXХ/.,hHeЭэ()*]*\s*([мМ][мМ])?\s*$', '', 'gi'), '[,.\s\-]+$', '', 'g'))) WHERE name ~ '\d'

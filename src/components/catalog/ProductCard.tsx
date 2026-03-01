@@ -11,6 +11,7 @@ interface Product {
   display_order: number
   created_at: string | null
   product_number?: string
+  dimensions?: string | null
 }
 
 interface ProductCardProps {
@@ -100,6 +101,9 @@ export function ProductCard({
         <h3 className="text-xl md:text-2xl font-medium">
           {product.product_number ? `№${product.product_number}` : `№${index + 1}`}. {product.name}
         </h3>
+        {product.dimensions && (
+          <p className="text-sm text-muted-foreground tracking-wide">{product.dimensions}</p>
+        )}
         {product.description && (
           <p className="text-muted-foreground leading-relaxed">{product.description}</p>
         )}

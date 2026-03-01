@@ -1,0 +1,1 @@
+UPDATE products SET dimensions = trim(regexp_replace(regexp_replace(regexp_replace(regexp_replace(trim(regexp_replace(regexp_replace(name, '[.,]?\s*[Рр]азмер\s*', ' ', 'g'), '^[^0-9]+', '', '')), '[hH](\d)', '\1', 'g'), '(\d)\s*[хxXХ]\s*(\d)', '\1*\2', 'g'), '(\d)\s*/\s*(\d)', '\1*\2', 'g'), '\s*[мМ][мМ]\s*$', '', 'g')) || ' мм' WHERE name ~ '\d'

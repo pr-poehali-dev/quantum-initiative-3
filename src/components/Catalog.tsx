@@ -18,6 +18,7 @@ interface Product {
   display_order: number
   created_at: string | null
   product_number?: string
+  dimensions?: string | null
 }
 
 export function Catalog() {

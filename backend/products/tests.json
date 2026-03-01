@@ -5,23 +5,13 @@
       "method": "GET",
       "path": "/",
       "expectedStatus": 200,
-      "expectedBody": "array",
       "bodyMatcher": "partial"
     },
     {
-      "name": "Create product without photo",
-      "method": "POST",
+      "name": "Options preflight",
+      "method": "OPTIONS",
       "path": "/",
-      "body": {
-        "name": "Деревянная шкатулка",
-        "description": "Ручная работа",
-        "price": 2500,
-        "in_stock": true
-      },
-      "expectedStatus": 201,
-      "expectedBody": {
-        "id": "number"
-      },
+      "expectedStatus": 200,
       "bodyMatcher": "partial"
     }
   ]

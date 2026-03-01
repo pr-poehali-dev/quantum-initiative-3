@@ -47,7 +47,7 @@ def handle_get(conn, event) -> dict:
     '''Получить список всех товаров'''
     cur = conn.cursor()
     cur.execute('''
-        SELECT id, name, description, price, photo_url, photos, in_stock, display_order, created_at, product_number
+        SELECT id, name, description, price, photo_url, photos, in_stock, display_order, created_at, product_number, dimensions
         FROM products
         ORDER BY display_order ASC, created_at DESC
     ''')
@@ -68,7 +68,8 @@ def handle_get(conn, event) -> dict:
             'in_stock': row[6],
             'display_order': row[7],
             'created_at': row[8].isoformat() if row[8] else None,
-            'product_number': row[9]
+            'product_number': row[9],
+            'dimensions': row[10]
         })
     
     cur.close()
@@ -137,6 +138,7 @@ def handle_put(conn, event) -> dict:
     in_stock = body.get('in_stock')
     display_order = body.get('display_order')
     product_number = body.get('product_number')
+    dimensions = body.get('dimensions')
     photo_base64 = body.get('photo_base64')
     
     photo_url = None
@@ -164,6 +166,9 @@ def handle_put(conn, event) -> dict:
     if product_number is not None:
         updates.append('product_number = %s')
         params.append(product_number)
+    if dimensions is not None:
+        updates.append('dimensions = %s')
+        params.append(dimensions)
     if photo_url:
         updates.append('photo_url = %s')
         params.append(photo_url)
