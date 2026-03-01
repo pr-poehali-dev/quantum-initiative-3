@@ -82,7 +82,7 @@ export function Reviews() {
             <HighlightedText>Отзывы покупателей</HighlightedText>
           </h2>
           <p className="text-stone-500 text-lg max-w-xl mx-auto">
-            Мнения людей, которые уже живут с\u00A0нашими изделиями
+            Мнения людей, которые уже живут с&nbsp;нашими изделиями
           </p>
         </div>
 

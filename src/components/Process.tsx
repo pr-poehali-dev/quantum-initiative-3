@@ -22,10 +22,10 @@ export function Process() {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            От\u00A0природы к\u00A0искусству
+            От&nbsp;природы к&nbsp;искусству
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            История создания вазы из\u00A0капа — от\u00A0дерева в\u00A0лесу до\u00A0готового шедевра
+            История создания вазы из&nbsp;капа — от&nbsp;дерева в&nbsp;лесу до&nbsp;готового шедевра
           </p>
         </div>
 
