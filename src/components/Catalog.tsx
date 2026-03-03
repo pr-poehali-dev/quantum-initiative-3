@@ -246,6 +246,7 @@ export function Catalog() {
           action: 'create_order',
           product_index: selectedProduct.index,
           product_name: selectedProduct.name,
+          product_number: selectedProduct.productNumber || '',
           customer_name: data.customerName,
           customer_phone: data.contactMethod === 'phone' || data.contactMethod === 'telegram' ? data.contactValue : '',
           contact_method: data.contactMethod,

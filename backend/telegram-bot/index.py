@@ -86,6 +86,7 @@ def create_order(data: dict) -> dict:
     """Создание нового заказа с сайта"""
     product_index = data.get('product_index')
     product_name = data.get('product_name')
+    product_number = data.get('product_number', '')
     customer_name = data.get('customer_name')
     customer_phone = data.get('customer_phone')
     contact_method = data.get('contact_method', 'telegram')
@@ -127,7 +128,7 @@ def create_order(data: dict) -> dict:
     
     message = (
         f"📦 <b>Новый заказ #{order_id}</b>\n\n"
-        f"<b>Товар:</b> №{product_index + 1}. {product_name}\n"
+        f"<b>Товар:</b> №{product_index + 1}. {product_name}" + (f" (арт. {product_number})" if product_number else "") + "\n"
         f"<b>Клиент:</b> {customer_name}\n"
         f"<b>{contact_label}:</b> {contact_value}\n"
         f"<b>Время:</b> {created_at.strftime('%d.%m.%Y %H:%M')}"
