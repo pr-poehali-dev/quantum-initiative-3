@@ -19,7 +19,34 @@ export function Header() {
 
   return (
     <header className="fixed z-50 w-full top-0">
-      <div className="bg-[#6b3a0f] shadow-lg">
+      {/* Мобильная шапка — только логотип и бургер, без полоски */}
+      <div className="md:hidden flex items-center justify-between px-4 py-2">
+        <a href="/" className="flex items-center" onClick={scrollToTop}>
+          <img
+            src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/9f79e38c-7906-48ed-bc3f-8d89d21c19af.png"
+            alt="Natural Masterpieces"
+            className="h-10 w-auto"
+          />
+        </a>
+        <button
+          className="p-2 text-white hover:text-[rgb(251,146,60)] transition-colors duration-300"
+          aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Десктопная полоска */}
+      <div className="hidden md:block bg-[#6b3a0f] shadow-lg">
         <div className="container mx-auto px-6 flex items-center justify-between" style={{ height: '56px' }}>
           <a href="/" className="flex items-center shrink-0" onClick={scrollToTop}>
             <img
@@ -60,21 +87,7 @@ export function Header() {
             </a>
           </div>
 
-          <button
-            className="md:hidden p-2 text-white hover:text-[rgb(251,146,60)] transition-colors duration-300"
-            aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            )}
-          </button>
+
         </div>
       </div>
 
