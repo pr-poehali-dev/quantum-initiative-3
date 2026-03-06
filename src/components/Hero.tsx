@@ -7,7 +7,7 @@ export function Hero() {
     const el = contentRef.current;
     if (!el) return;
     const apply = () => {
-      el.style.bottom = window.innerWidth >= 768 ? '48px' : '35%';
+      el.style.bottom = window.innerWidth >= 768 ? '48px' : '25%';
     };
     apply();
     window.addEventListener('resize', apply);
