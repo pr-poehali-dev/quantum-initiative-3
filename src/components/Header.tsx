@@ -40,6 +40,7 @@ export function Header() {
             className="h-14 w-auto transition-transform group-hover:scale-105"
           />
         </a>
+        <div className="absolute left-0 right-0 bottom-0 h-1 bg-[#6b3a0f]" />
 
         <ul className="hidden md:flex items-center gap-10 text-sm tracking-wide">
           {[
