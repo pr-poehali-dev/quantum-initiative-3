@@ -13,7 +13,7 @@ export function Hero() {
       />
       {/* Main hero image */}
       <img
-        src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/17fdaeff-2d44-4a72-a4b1-752e753651e8.png"
+        src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d1f09ad4-ee6e-445c-9bc8-ab3e4b1f5c1b.jpg"
         alt="КИС — кап и сувель"
         className="absolute inset-0 w-full h-full object-contain object-top z-[1]"
       />
