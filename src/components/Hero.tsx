@@ -11,21 +11,23 @@ export function Hero() {
           opacity: 0.6,
         }}
       />
-      {/* Main hero image */}
+
+      {/* Main hero image — на мобильных ограничена по высоте, на ПК на весь экран */}
       <img
         src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d1f09ad4-ee6e-445c-9bc8-ab3e4b1f5c1b.jpg"
         alt="КИС — кап и сувель"
-        className="absolute inset-0 w-full h-full object-contain object-top z-[1]"
+        className="absolute top-0 left-0 w-full z-[1]"
+        style={{ maxHeight: '60vh', objectFit: 'cover', objectPosition: 'top' }}
       />
 
-      {/* Dark gradient at bottom for readability */}
+      {/* Dark gradient */}
       <div
         className="absolute inset-x-0 bottom-0 z-[2]"
         style={{ height: '40%', background: 'linear-gradient(to top, rgba(50,20,0,0.9) 0%, rgba(50,20,0,0.4) 60%, transparent 100%)' }}
       />
 
-      {/* Bottom content */}
-      <div className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center bottom-[18%] md:bottom-4">
+      {/* Content — на мобильных в нижней части (коричневая зона), на ПК у самого низа */}
+      <div className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center bottom-[22%] md:bottom-6">
         <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-light">
           Интерьер начинается с деталей
         </p>
