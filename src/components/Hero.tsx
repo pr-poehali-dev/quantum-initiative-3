@@ -1,4 +1,19 @@
+import { useEffect, useRef } from "react";
+
 export function Hero() {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const apply = () => {
+      el.style.bottom = window.innerWidth >= 768 ? '48px' : '38%';
+    };
+    apply();
+    window.addEventListener('resize', apply);
+    return () => window.removeEventListener('resize', apply);
+  }, []);
+
   return (
     <section id="hero" className="relative min-h-screen overflow-hidden" style={{ background: "#6b3a0f" }}>
       {/* Background pattern */}
@@ -25,7 +40,11 @@ export function Hero() {
       />
 
       {/* Bottom content */}
-      <div className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center md:bottom-12" style={{ bottom: '22%' }}>
+      <div
+        ref={contentRef}
+        className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center"
+        style={{ bottom: '48px' }}
+      >
         <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-light">
           Интерьер начинается с деталей
         </p>
