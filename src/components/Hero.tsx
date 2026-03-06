@@ -36,14 +36,15 @@ export function Hero() {
         </div>
       </div>
 
-      {/* MOBILE: картинка натуральных пропорций сверху, слоган на коричневом фоне снизу */}
-      <div className="md:hidden relative z-[1]">
+      {/* MOBILE */}
+      <div className="md:hidden relative z-[1] flex flex-col min-h-screen">
         <img
           src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d1f09ad4-ee6e-445c-9bc8-ab3e4b1f5c1b.jpg"
           alt="КИС — кап и сувель"
-          className="w-full block"
+          className="w-full block flex-shrink-0"
+          style={{ maxHeight: '65vw' , objectFit: 'cover', objectPosition: 'top' }}
         />
-        <div className="px-6 py-10 text-center flex flex-col items-center">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-8 text-center">
           <p className="text-white tracking-[0.2em] uppercase text-sm mb-6 font-light">
             Интерьер начинается с деталей
           </p>
