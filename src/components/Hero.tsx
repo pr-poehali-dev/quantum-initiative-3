@@ -15,7 +15,7 @@ export function Hero() {
       <img
         src="https://cdn.poehali.dev/projects/7ae985cc-6f2a-4264-a699-8608e9d4cbcf/bucket/d1f09ad4-ee6e-445c-9bc8-ab3e4b1f5c1b.jpg"
         alt="КИС — кап и сувель"
-        className="absolute inset-0 w-full h-full object-cover md:object-contain object-top z-[1]"
+        className="absolute inset-0 w-full h-full object-contain object-top z-[1]"
       />
 
       {/* Dark gradient at bottom for readability */}
@@ -25,7 +25,7 @@ export function Hero() {
       />
 
       {/* Bottom content */}
-      <div className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center bottom-[38%] md:bottom-4">
+      <div className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center bottom-[18%] md:bottom-4">
         <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-light">
           Интерьер начинается с деталей
         </p>
