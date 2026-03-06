@@ -45,7 +45,7 @@ export function Hero() {
         className="absolute left-0 right-0 z-[3] text-center px-6 flex flex-col items-center"
         style={{ bottom: '48px' }}
       >
-        <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-light">
+        <p className="text-white tracking-[0.2em] uppercase text-sm md:text-base mb-5 font-bold">
           Интерьер начинается с деталей
         </p>
         <a
